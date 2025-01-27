@@ -488,3 +488,6 @@ async function init() {
 init().catch((error) => {
   console.error(error);
 });
+
+import { grid } from "../the-grid";
+grid(document.getElementById("grid") as HTMLElement, () => document.body.classList.add("grid-loaded")); // @DEV: display grid background
