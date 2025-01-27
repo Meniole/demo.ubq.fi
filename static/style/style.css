@@ -942,7 +942,22 @@ input {
   border: 1px solid #80808080;
   padding: 8px 16px;
 }
+#user-access {
+  width: 100%;
+  padding: 16px;
+}
 
-#user-access div{
-  margin:8px auto
+#user-access div {
+  margin: 8px auto;
+  display: inline-block;
+}
+#user-access > div {
+  display: block;
+}
+textarea {
+  vertical-align: middle;
+  width: 100%;
+}
+textarea:disabled {
+  background-color: transparent;
 }

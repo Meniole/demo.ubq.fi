@@ -70,17 +70,18 @@
           <select id="orgName" disabled> </select>
           <span class="status-log"></span>
         </div>
+        <!--
         <div>
           <label for="outKey">OUTPUT</label>
           <div class="out-file">ubiquibot-config.yml</div>
-          <textarea type="text" id="outKey" disabled="true"></textarea>
         </div>
+         -->
       </div>
       <div id="step2" class="step-container hidden">
         <div>
           <label for="allowance">ALLOWANCE AMOUNT</label>
           <div>
-            <input type="text" id="allowance" />
+            <input type="number" id="allowance" value="100000" />
             <span>DAI</span>
             <span class="status-log"></span>
           </div>
@@ -91,11 +92,14 @@
         <label for="statusKey">STATUS</label>
         <input type="text" id="statusKey" disabled="true" />
       </div>
-      <div class="" style="display: none">
-        <span class=""></span>
+      <div class="mb-3 loader-wrap" style="display: none">
+        <span class="loader-x"></span>
       </div>
-      <div class="">
+      <div>
         <button type="button" id="setBtn">Set</button>
+      </div>
+      <div>
+        <textarea type="text" id="outKey" disabled="true"></textarea>
       </div>
     </div>
 
