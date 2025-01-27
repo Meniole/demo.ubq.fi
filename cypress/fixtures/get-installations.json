@@ -27,7 +27,7 @@
       "access_tokens_url": "https://api.github.com/app/installations/47252474/access_tokens",
       "repositories_url": "https://api.github.com/installation/repositories",
       "html_url": "https://github.com/organizations/Ubiquity/settings/installations/47252474",
-      "app_id": 236521,
+      "app_id": 975031,
       "app_slug": "ubiquibot",
       "target_id": 159901852,
       "target_type": "Organization",

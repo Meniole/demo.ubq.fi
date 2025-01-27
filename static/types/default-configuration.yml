@@ -1,0 +1,19 @@
+plugins:
+  - uses:
+      - plugin: https://ubiquity-os-command-start-stop-main.ubiquity.workers.dev
+  - uses:
+      - plugin: https://ubiquity-os-command-wallet-main.ubiquity.workers.dev
+  - uses:
+      - plugin: ubiquity-os-marketplace/command-ask@main
+  - uses:
+      - plugin: https://ubiquity-os-command-query-user-main.ubiquity.workers.dev
+  - uses:
+      - plugin: https://ubiquity-os-daemon-pricing-main.ubiquity.workers.dev
+  - uses:
+      - plugin: ubiquity-os-marketplace/text-conversation-rewards@main
+  - uses:
+      - plugin: ubiquity-os-marketplace/daemon-disqualifier@main
+  - uses:
+      - plugin: ubiquity-os-marketplace/daemon-merging@main
+  - uses:
+      - plugin: https://ubiquity-os-comment-vector-embeddings-main.ubiquity.workers.dev

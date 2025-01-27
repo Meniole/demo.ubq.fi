@@ -1,12 +1,13 @@
 import { JsonRpcSigner } from "@ethersproject/providers";
 import { createOrUpdateTextFile } from "@octokit/plugin-create-or-update-text-file";
 import { Octokit } from "@octokit/rest";
-import { BotConfig, generateConfiguration } from "@ubiquibot/configuration";
 import { PERMIT2_ADDRESS } from "@uniswap/permit2-sdk";
 import { ethers } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
 import _sodium from "libsodium-wrappers";
 import YAML from "yaml";
+//@ts-expect-error This is taken care of by es-build
+import defaultConf from "../../types/default-configuration.yml";
 import { erc20Abi } from "./abis";
 import { getNetworkName, NetworkIds, Tokens } from "./constants";
 import { getSessionToken, renderGitHubLoginButton } from "./github-login-button";
@@ -22,9 +23,9 @@ const allowanceInput = document.getElementById("allowance") as HTMLInputElement;
 const chainIdSelect = document.getElementById("chainId") as HTMLSelectElement;
 const loader = document.querySelector(".loader-wrap") as HTMLElement;
 
-const APP_ID = 236521;
-const REPO_NAME = "ubiquibot-config";
-const KEY_PATH = ".github/ubiquibot-config.yml";
+const APP_ID = 975031;
+const REPO_NAME = ".ubiquity-os";
+const KEY_PATH = ".github/.ubiquity-os.config.yml";
 const PRIVATE_ENCRYPTED_KEY_NAME = "evmPrivateEncrypted";
 const EVM_NETWORK_KEY_NAME = "evmNetworkId";
 const KEY_PREFIX = "HSK_";
@@ -33,8 +34,6 @@ const X25519_KEY = "5ghIlfGjz_ChcYlBDOG7dzmgAgBPuTahpvTMBipSH00";
 const STATUS_LOG = ".status-log";
 
 let encryptedValue = "";
-
-const defaultConf = generateConfiguration();
 
 export async function parseYAML<T>(data: string | undefined) {
   if (!data) return undefined;
@@ -59,7 +58,7 @@ export async function parseJSON<T>(data: string) {
   }
 }
 
-export function stringifyYAML(value: BotConfig): string {
+export function stringifyYAML(value: Record<string, unknown>): string {
   return YAML.stringify(value, { defaultKeyType: "PLAIN", defaultStringType: "QUOTE_DOUBLE", lineWidth: 0 });
 }
 
@@ -129,8 +128,7 @@ async function sodiumEncryptedSeal(publicKey: string, secret: string) {
     const binsec = sodium.from_string(secret);
     const encBytes = sodium.crypto_box_seal(binsec, binkey);
     const output = sodium.to_base64(encBytes, sodium.base64_variants.URLSAFE_NO_PADDING);
-    defaultConf.keys[PRIVATE_ENCRYPTED_KEY_NAME] = output;
-    defaultConf.payments[EVM_NETWORK_KEY_NAME] = Number(chainIdSelect.value);
+    setEvmSettings(output, Number(chainIdSelect.value));
     outKey.value = stringifyYAML(defaultConf);
     outKey.style.height = getTextBox(outKey.value);
     encryptedValue = output;
@@ -179,8 +177,7 @@ async function handleInstall(
     }
 
     const updatedConf = defaultConf;
-    updatedConf.keys[PRIVATE_ENCRYPTED_KEY_NAME] = encryptedValue;
-    updatedConf.payments[EVM_NETWORK_KEY_NAME] = Number(chainIdSelect.value);
+    setEvmSettings(encryptedValue, Number(chainIdSelect.value));
 
     // combine configs (default + remote org wide)
     const combinedConf = Object.assign(updatedConf, defaultConf);
@@ -446,6 +443,7 @@ async function populateOrgs() {
     const pluginKit = Octokit.plugin(createOrUpdateTextFile);
     const octokit = new pluginKit({ auth: getSessionToken() });
     const { data } = await octokit.rest.orgs.listForAuthenticatedUser({ per_page: 100 });
+    console.log(data);
     const selectContainer = document.getElementById("orgName");
     if (selectContainer) {
       selectContainer.innerHTML = "";
@@ -462,10 +460,22 @@ async function populateOrgs() {
   }
 }
 
+function setEvmSettings(privateKey: string, evmNetwork: number) {
+  for (const plugin of defaultConf.plugins) {
+    for (const use of plugin.uses) {
+      if (use.plugin.includes("text-conversation-rewards")) {
+        use.with = {
+          [PRIVATE_ENCRYPTED_KEY_NAME]: privateKey,
+          [EVM_NETWORK_KEY_NAME]: evmNetwork,
+        };
+      }
+    }
+  }
+}
+
 async function init() {
   if (defaultConf !== undefined) {
     try {
-      defaultConf.keys[PRIVATE_ENCRYPTED_KEY_NAME] = undefined;
       setInputListeners();
       await renderGitHubLoginButton();
       await populateOrgs();

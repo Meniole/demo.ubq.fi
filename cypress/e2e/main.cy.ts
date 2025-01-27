@@ -11,7 +11,7 @@ describe("Homepage tests", () => {
       }).as("githubGetUser");
     });
     cy.fixture("get-ubiquibot-config.json").then((file) => {
-      cy.intercept("GET", `https://api.github.com/repos/${ORG_NAME}/ubiquibot-config`, (req) => {
+      cy.intercept("GET", `https://api.github.com/repos/${ORG_NAME}/.ubiquity-os`, (req) => {
         req.reply(file);
       }).as("githubGetUbiquibotConfig");
     });
@@ -36,7 +36,7 @@ describe("Homepage tests", () => {
       }).as("githubPutInstallation");
     });
     cy.fixture("put-file.json").then((file) => {
-      cy.intercept("PUT", `https://api.github.com/repos/${ORG_NAME}/ubiquibot-config/contents/.github%2Fubiquibot-config.yml`, (req) => {
+      cy.intercept("PUT", `https://api.github.com/repos/${ORG_NAME}/.ubiquity-os/contents/.github%2F.ubiquity-os.config.yml`, (req) => {
         req.reply(file);
       }).as("githubPutConfigFile");
     });
@@ -56,7 +56,7 @@ describe("Homepage tests", () => {
       }).as("githubSearch");
     });
     cy.fixture("put-config.json").then((file) => {
-      cy.intercept("PUT", `https://api.github.com/repos/${ORG_NAME.toLowerCase()}/ubiquibot-config/contents/.github**`, (req) => {
+      cy.intercept("PUT", `https://api.github.com/repos/${ORG_NAME.toLowerCase()}/.ubiquity-os/contents/.github**`, (req) => {
         req.reply(file);
       }).as("githubPutContents");
     });

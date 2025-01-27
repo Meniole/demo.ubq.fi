@@ -4,6 +4,7 @@ import esbuild from "esbuild";
 import { access, mkdir } from "fs/promises";
 import { join } from "path";
 import { invertColors } from "./plugins/invert-colors.js";
+import { yamlPlugin } from "esbuild-plugin-yaml";
 
 // Ensure output directory exists
 const outDir = join("static/dist");
@@ -51,6 +52,7 @@ export const esBuildContext: esbuild.BuildOptions = {
   define: createEnvDefines(["SUPABASE_URL", "SUPABASE_ANON_KEY", "FRONTEND_URL"], {
     commitHash: execSync(`git rev-parse --short HEAD`).toString().trim(),
   }),
+  plugins: [yamlPlugin({})],
 };
 
 console.log("Building to:", outDir);
