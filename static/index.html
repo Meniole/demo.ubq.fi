@@ -53,37 +53,37 @@
           <div id="overlay-item-container"> </div>
         </div>
         <div>
-          <label for="chainId">CHAIN_ID</label>
           <select id="chainId">
             <option value="1">Ethereum Mainnet</option>
-            <option value="100">Gnosis Mainnet</option>
+            <option value="100">Gnosis Chain</option>
           </select>
+          <label for="chainId">Network</label>
           <span class="status-log"></span>
         </div>
         <div>
-          <label for="walletPrivateKey">WALLET_PRIVATE_KEY</label>
           <input type="text" id="walletPrivateKey" />
+          <label for="walletPrivateKey">EVM Wallet Private Key</label>
           <span class="status-log"></span>
         </div>
         <div>
-          <label for="orgName">ORG_NAME</label>
           <select id="orgName" disabled> </select>
+          <label for="orgName">Organization Name</label>
           <span class="status-log"></span>
         </div>
         <!--
         <div>
-          <label for="outKey">OUTPUT</label>
           <div class="out-file">ubiquibot-config.yml</div>
+          <label for="outKey">OUTPUT</label>
         </div>
          -->
       </div>
       <div id="step2" class="step-container hidden">
         <div>
-          <label for="allowance">ALLOWANCE AMOUNT</label>
           <div>
             <input type="number" id="allowance" value="100000" />
-            <span>DAI</span>
+            <!-- <span>DAI</span> -->
             <span class="status-log"></span>
+            <label for="allowance">Wallet Allowance</label>
           </div>
         </div>
       </div>

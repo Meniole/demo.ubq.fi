@@ -949,15 +949,17 @@ input {
 
 #user-access div {
   margin: 8px auto;
-  display: inline-block;
+  /* display: inline-block; */
 }
 #user-access > div {
-  display: block;
+  /* display: block; */
 }
 textarea {
   vertical-align: middle;
   width: 100%;
   border: none;
+  font-family: monospace;
+  font-size: 12px;
 }
 textarea:disabled {
   background-color: transparent;
