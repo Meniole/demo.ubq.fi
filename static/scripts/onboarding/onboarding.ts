@@ -87,7 +87,7 @@ function statusToggle(type: "error" | "warn" | "success", message: string) {
   resetToggle();
   const statusKey = document.getElementById("statusKey") as HTMLInputElement;
   classListToggle(statusKey, type);
-  statusKey.value = message;
+  statusKey.innerText = message;
 }
 
 function focusToggle(targetElem: HTMLInputElement | HTMLTextAreaElement, type: "error" | "warn" | "success", message: string) {

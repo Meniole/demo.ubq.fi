@@ -957,6 +957,9 @@ input {
 textarea {
   vertical-align: middle;
   width: 100%;
+  border: none;
+  font-family: monospace;
+  font-size: 12px;
 }
 textarea:disabled {
   background-color: transparent;
