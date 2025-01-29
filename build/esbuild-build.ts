@@ -1,10 +1,10 @@
 import { execSync } from "child_process";
 import { config } from "dotenv";
 import esbuild from "esbuild";
+import { yamlPlugin } from "esbuild-plugin-yaml";
 import { access, mkdir } from "fs/promises";
 import { join } from "path";
-import { invertColors } from "./plugins/invert-colors.js";
-import { yamlPlugin } from "esbuild-plugin-yaml";
+import { invertColors } from "./plugins/invert-colors";
 
 // Ensure output directory exists
 const outDir = join("static/dist");
@@ -18,21 +18,13 @@ async function ensureOutDir() {
   }
 }
 
-// import { pwaManifest } from "./plugins/pwa-manifest";
+import { pwaManifest } from "./plugins/pwa-manifest";
 const typescriptEntries = ["static/scripts/onboarding/onboarding.ts"];
 const cssEntries = ["static/style/style.css", "static/style/special.css"];
 export const entries = [...typescriptEntries, ...cssEntries];
 
 export const esBuildContext: esbuild.BuildOptions = {
-  // logLevel: "debug",
-  // metafile: true,
-  // write: true,
-  // allowOverwrite: true,
-  plugins: [
-    invertColors,
-    // pwaManifest
-  ],
-
+  plugins: [invertColors, pwaManifest, yamlPlugin({})],
   sourcemap: true,
   entryPoints: entries,
   bundle: true,
@@ -47,16 +39,11 @@ export const esBuildContext: esbuild.BuildOptions = {
   },
   outdir: outDir,
   outbase: "static",
-  // publicPath: "/out/",
   absWorkingDir: process.cwd(),
   define: createEnvDefines(["SUPABASE_URL", "SUPABASE_ANON_KEY", "FRONTEND_URL"], {
     commitHash: execSync(`git rev-parse --short HEAD`).toString().trim(),
   }),
-  plugins: [yamlPlugin({})],
 };
-
-console.log("Building to:", outDir);
-console.log("Entry points:", entries);
 
 async function build() {
   // Create output directory before building

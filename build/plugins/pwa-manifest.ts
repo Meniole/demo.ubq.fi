@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import manifest from "../../static/manifest.json";
 
-const DIST = `../../static/out`;
+const DIST = `../../static/dist`;
 
 export const pwaManifest: esbuild.Plugin = {
   name: "pwa-manifest",

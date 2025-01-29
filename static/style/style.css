@@ -75,13 +75,11 @@
     padding: 0;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
-    height: 100vh;
   }
   * {
     font-family: "Proxima Nova", "Ubiquity Nova", sans-serif;
     color: #fff;
     font-weight: 500;
-    /* box-sizing: border-box; */
   }
   @font-face {
     font-family: "Ubiquity Nova";
@@ -236,7 +234,6 @@
     text-align: center;
     white-space: nowrap;
     background-color: #80808020;
-    /* width: 64px; */
     letter-spacing: 0.5px;
     flex-grow: 4;
     justify-content: center;
@@ -970,4 +967,16 @@ textarea {
   width: 100%;
   top: 0;
   pointer-events: initial !important;
+}
+body,
+html {
+  height: 100vh;
+}
+
+label:not([for="view-toggle"]) {
+  vertical-align: middle;
+  padding: 8px 16px;
+}
+button {
+  padding: 8px 16px;
 }

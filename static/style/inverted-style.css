@@ -80,7 +80,6 @@
     font-family: "Proxima Nova", "Ubiquity Nova", sans-serif;
     color: #000000;
     font-weight: 500;
-    /* box-sizing: border-box; */
   }
   @font-face {
     font-family: "Ubiquity Nova";
@@ -235,7 +234,6 @@
     text-align: center;
     white-space: nowrap;
     background-color: #7f7f7f20;
-    /* width: 64px; */
     letter-spacing: 0.5px;
     flex-grow: 4;
     justify-content: center;
@@ -357,6 +355,7 @@
     border-bottom: 1px solid #7f7f7f20;
     -webkit-backdrop-filter: blur(8px);
     align-items: center;
+    font-size: 12px;
   }
   #authentication {
     position: absolute;
@@ -943,7 +942,7 @@ input {
   padding: 8px 16px;
 }
 #user-access {
-  width: 100%;
+  width: calc(200% / 3);
   padding: 16px;
 }
 
@@ -954,13 +953,30 @@ input {
 #user-access > div {
   /* display: block; */
 }
+textarea:disabled {
+  background-color: transparent;
+  pointer-events: none;
+}
+
 textarea {
-  vertical-align: middle;
-  width: 100%;
   border: none;
   font-family: monospace;
   font-size: 12px;
+  position: absolute;
+  vertical-align: middle;
+  width: 100%;
+  top: 0;
+  pointer-events: initial !important;
 }
-textarea:disabled {
-  background-color: transparent;
+body,
+html {
+  height: 100vh;
+}
+
+label:not([for="view-toggle"]) {
+  vertical-align: middle;
+  padding: 8px 16px;
+}
+button {
+  padding: 8px 16px;
 }
