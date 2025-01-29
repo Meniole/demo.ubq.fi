@@ -84,9 +84,12 @@ function classListToggle(targetElem: HTMLElement, target: "error" | "warn" | "su
 
 function statusToggle(type: "error" | "warn" | "success", message: string) {
   resetToggle();
-  const statusKey = document.getElementById("statusKey") as HTMLInputElement;
-  classListToggle(statusKey, type);
-  statusKey.innerText = message;
+  const statusKeyElements = document.getElementsByClassName("statusKey");
+  Array.from(statusKeyElements).forEach((element) => {
+    const statusKeyElement = element as HTMLElement;
+    classListToggle(statusKeyElement, type);
+    statusKeyElement.innerText = message;
+  });
 }
 
 function focusToggle(targetElem: HTMLInputElement | HTMLTextAreaElement, type: "error" | "warn" | "success", message: string) {
@@ -131,6 +134,7 @@ async function sodiumEncryptedSeal(publicKey: string, secret: string) {
     setEvmSettings(output, Number(chainIdSelect.value));
     outKey.value = stringifyYAML(defaultConf);
     outKey.style.height = getTextBox(outKey.value);
+    outKey.disabled = false;
     encryptedValue = output;
     singleToggle("success", `Success: Key Encryption is ok.`);
   } catch (error: unknown) {
