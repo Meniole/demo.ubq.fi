@@ -1,7 +1,7 @@
 {
-  "provider_token": "123",
-  "access_token": "123",
-  "refresh_token": "123",
+  "provider_token": "gho_test123456789mocktoken",
+  "access_token": "gho_test123456789mocktoken",
+  "refresh_token": "gho_test123456789mocktoken",
   "token_type": "bearer",
   "user": {
     "id": "1",
