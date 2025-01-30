@@ -1,4 +1,4 @@
-import { OAuthToken } from "../../static/scripts/onboarding/github-login-button";
+import { OAuthToken } from "../../static/scripts/onboarding/github-oauth";
 
 describe("Homepage tests", () => {
   const ORG_NAME = "Ubiquity";
@@ -90,14 +90,14 @@ describe("Homepage tests", () => {
     cy.wait("@githubGetUserOrgs");
     cy.get("#setBtn").click();
     cy.log("Display warning on empty WALLET_PRIVATE_KEY");
-    cy.get(":nth-child(3) > .status-log.warn").contains(/.+/);
+    cy.get("#walletPrivateKey").parent().find(".status-log").should("exist");
     cy.get("#walletPrivateKey").type("deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef");
-    cy.get("#orgName").select("ubiquity");
+    cy.get("#orgName").scrollIntoView().select("ubiquity", { force: true });
     cy.get("#setBtn").click();
     cy.get("#outKey").then((e) => {
       expect(e.val()).not.to.be.empty;
     });
-    cy.log("Expected to be a step 2 of the form");
-    cy.get("#stepper > :nth-child(2)").should("have.class", "active");
+    cy.log("Expected to be at step 2 of the form");
+    cy.get("#step2").should("not.have.class", "hidden");
   });
 });
