@@ -7,23 +7,31 @@ jobs:
   cypress-run:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20.10.0
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@latest
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
           build: yarn run build
           start: yarn start
           browser: chrome
+          wait-on: 'http://localhost:8080'
+          wait-on-timeout: 120
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           FRONTEND_URL: "http://localhost:8080"
           SUPABASE_URL: "https://wfzpewmlyiozupulbuur.supabase.co"
           SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmenBld21seWlvenVwdWxidXVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTU2NzQzMzksImV4cCI6MjAxMTI1MDMzOX0.SKIL3Q0NOBaMehH0ekFspwgcu3afp3Dl9EDzPqs1nKs
+          NODE_ENV: "test"
+          CI: "true"
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

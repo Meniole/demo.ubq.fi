@@ -2,7 +2,9 @@ import { OAuthToken } from "../../static/scripts/onboarding/github-oauth";
 
 describe("Homepage tests", () => {
   const ORG_NAME = "Ubiquity";
+  const SUPABASE_AUTH_KEY = "sb-wfzpewmlyiozupulbuur-auth-token";
   let loginToken: OAuthToken;
+  const beVisible = "be.visible";
 
   beforeEach(() => {
     cy.fixture("get-user.json").then((file) => {
@@ -82,21 +84,38 @@ describe("Homepage tests", () => {
         statusCode: 200,
       });
       // Simulate login token
-      // cSpell: ignore wfzpewmlyiozupulbuur
-      window.localStorage.setItem("sb-wfzpewmlyiozupulbuur-auth-token", JSON.stringify(loginToken));
+      window.localStorage.setItem(SUPABASE_AUTH_KEY, JSON.stringify(loginToken));
     }).as("githubLogin");
-    cy.get("#github-login-button").click();
+    cy.log("Clicking GitHub login button");
+    cy.get("#github-login-button").should(beVisible).click();
+    cy.log("Simulated OAuth login completed");
     cy.visit("/");
-    cy.wait("@githubGetUserOrgs");
+    cy.log("Waiting for user orgs");
+    cy.wait("@githubGetUserOrgs").then((interception) => {
+      cy.log(`User orgs response: ${JSON.stringify(interception.response?.body)}`);
+    });
     cy.get("#setBtn").click();
     cy.log("Display warning on empty WALLET_PRIVATE_KEY");
     cy.get("#walletPrivateKey").parent().find(".status-log").should("exist");
     cy.get("#walletPrivateKey").type("deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef");
-    cy.get("#orgName").scrollIntoView().select("ubiquity", { force: true });
-    cy.get("#setBtn").click();
-    cy.get("#outKey").then((e) => {
-      expect(e.val()).not.to.be.empty;
+    cy.wait("@githubGetUserOrgs");
+    cy.get("#orgName").should("not.be.disabled").scrollIntoView().select("ubiquity", { force: true });
+    cy.get("#setBtn").should(beVisible).click();
+    cy.log("Waiting for API calls to complete");
+    cy.wait("@githubPutContents").then((interception) => {
+      cy.log(`githubPutContents response: ${JSON.stringify(interception.response?.body)}`);
     });
+    cy.wait("@githubPutConfigFile").then((interception) => {
+      cy.log(`githubPutConfigFile response: ${JSON.stringify(interception.response?.body)}`);
+    });
+    cy.log("Waiting for outKey to be populated");
+    cy.log("Checking outKey value");
+    cy.get("#outKey", { timeout: 10000 })
+      .should(beVisible)
+      .then(($el) => {
+        cy.log(`outKey value: ${$el.val()}`);
+        expect($el.val(), "outKey should not be empty").to.not.be.empty;
+      });
     cy.log("Expected to be at step 2 of the form");
     cy.get("#step2").should("not.have.class", "hidden");
   });
