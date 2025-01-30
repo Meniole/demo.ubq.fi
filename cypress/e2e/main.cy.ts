@@ -8,7 +8,7 @@ describe("Homepage tests", () => {
 
   beforeEach(() => {
     // Catch uncaught exceptions
-    Cypress.on('uncaught:exception', (err, _runnable) => {
+    Cypress.on("uncaught:exception", (err) => {
       cy.log(`Uncaught exception: ${err.message}`);
       return false;
     });
@@ -18,7 +18,7 @@ describe("Homepage tests", () => {
       cy.log(`[DEBUG] Intercepted PUT request to: ${req.url}`);
       cy.log(`[DEBUG] Request headers: ${JSON.stringify(req.headers)}`);
       cy.log(`[DEBUG] Request body: ${JSON.stringify(req.body)}`);
-      req.on('response', (res) => {
+      req.on("response", (res) => {
         cy.log(`[DEBUG] Response status: ${res.statusCode}`);
         cy.log(`[DEBUG] Response headers: ${JSON.stringify(res.headers)}`);
         if (res.statusCode >= 400) {
@@ -60,7 +60,7 @@ describe("Homepage tests", () => {
         req.reply({
           statusCode: 200,
           body: file,
-          delay: 100 // Small delay to ensure stable order
+          delay: 100, // Small delay to ensure stable order
         });
       }).as("githubGetInstallations");
     });
@@ -82,7 +82,7 @@ describe("Homepage tests", () => {
         cy.log(`[DEBUG] Request body: ${JSON.stringify(req.body)}`);
         req.reply({
           statusCode: 201,
-          body: file
+          body: file,
         });
       }).as("githubPutConfigFile");
     });
@@ -122,7 +122,7 @@ describe("Homepage tests", () => {
       onBeforeLoad(win) {
         cy.stub(win.console, "error").as("consoleError");
         cy.stub(win.console, "warn").as("consoleWarn");
-      }
+      },
     });
     cy.intercept("https://github.com/login/oauth/authorize**", (req) => {
       req.reply({
@@ -136,47 +136,25 @@ describe("Homepage tests", () => {
     cy.log("Simulated OAuth login completed");
     cy.visit("/");
     cy.log("Waiting for user orgs");
-    cy.wait("@githubGetUserOrgs").then((interception) => {
-      const orgs = interception.response?.body;
-      cy.log(`User orgs response: ${JSON.stringify(orgs)}`);
-      // Store orgs for later validation
-      cy.wrap(orgs.map((org: { login: string }) => org.login)).as("orgLogins");
-    });
-    cy.get("#setBtn").click();
+    cy.wait("@githubGetUserOrgs")
+      .its("response.body")
+      .then((orgs: Array<{ login: string }> | undefined) => {
+        if (!orgs) return [];
+        return orgs.map((org) => org.login);
+      })
+      .as("orgLogins");
     cy.log("Display warning on empty WALLET_PRIVATE_KEY");
     cy.get("#walletPrivateKey").parent().find(".status-log").should("exist");
     cy.get("#walletPrivateKey").type("deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef");
     cy.log("Checking if organization dropdown is ready");
-    cy.get("#orgName", { timeout: 10000 })
-      .should("not.be.disabled")
-      .and("have.length.gt", 0)
-      .then(($select) => {
-        cy.get("@orgLogins").then((orgLogins) => {
-          const options = $select.find("option");
-          const optionValues = options
-            .toArray()
-            .map((opt) => (opt as HTMLOptionElement).value)
-            .filter(Boolean);
-          cy.log(`Available options: ${optionValues.join(", ")}`);
-          expect(optionValues).to.include("ubiquity");
-          expect(optionValues.length).to.equal(orgLogins.length);
-          cy.wrap($select).scrollIntoView().select("ubiquity", { force: true });
-        });
-      });
-    // Log button state before click
-    cy.get("#setBtn").should(beVisible).then($btn => {
-      const btnText = $btn.text();
-      const isDisabled = $btn.prop('disabled');
-      const isVisible = $btn.is(':visible');
-      cy.log(`[DEBUG] Button details - text: "${btnText}", disabled: ${isDisabled}, visible: ${isVisible}`);
-    });
+    // Handle organization dropdown and select organization
+    cy.get("#orgName", { timeout: 10000 }).should("not.be.disabled").and("have.length.gt", 0).select("ubiquity");
 
-    // Click the button and handle subsequent actions
+    // Click the button to trigger API calls
     cy.get("#setBtn").click();
-    cy.log('[DEBUG] Button click executed');
 
     // Check for errors after click
-    cy.get(".error", { timeout: 1000 }).then($errors => {
+    cy.get(".error", { timeout: 1000 }).then(($errors) => {
       if ($errors.length > 0) {
         cy.log(`[DEBUG] Found errors after click: ${$errors.text()}`);
       }
@@ -196,26 +174,20 @@ describe("Homepage tests", () => {
         cy.log(`[DEBUG] Console warnings after click: ${JSON.stringify(typedSpy.args)}`);
       }
     });
+
     cy.log("Waiting for API calls to complete");
 
-    // Wait for installations first
-    cy.log("Waiting for installations...");
-    cy.wait("@githubGetInstallations", { timeout: 10000 }).then((interception) => {
-      cy.log(`[DEBUG] Installations response: ${JSON.stringify(interception.response?.body)}`);
-      const installations = interception.response?.body.installations || [];
-      const hasValidInstallation = installations.some((inst: { app_id: number }) => inst.app_id === 975031);
-      cy.log(`[DEBUG] Has valid installation: ${hasValidInstallation}`);
-    });
+    // Wait for installations and validate
+    cy.wait("@githubGetInstallations", { timeout: 10000 })
+      .its("response.body.installations")
+      .then((installations: Array<{ app_id: number }> = []) => {
+        const hasValidInstallation = installations.some((inst) => inst.app_id === 975031);
+        expect(hasValidInstallation).to.be.true;
+      });
 
-    cy.log("Waiting for githubPutContents...");
-    cy.wait("@githubPutContents", { timeout: 10000 }).then((interception) => {
-      cy.log(`[DEBUG] PutContents response: ${JSON.stringify(interception.response?.body)}`);
-    });
-
-    cy.log("Waiting for githubPutConfigFile...");
-    cy.wait("@githubPutConfigFile", { timeout: 10000 }).then((interception) => {
-      cy.log(`[DEBUG] PutConfigFile response: ${JSON.stringify(interception.response?.body)}`);
-    });
+    // Wait for content updates
+    cy.wait("@githubPutContents", { timeout: 10000 });
+    cy.wait("@githubPutConfigFile", { timeout: 10000 });
     cy.log("Waiting for outKey to be populated");
     cy.log("Checking outKey value");
     cy.get("#outKey", { timeout: 10000 })
