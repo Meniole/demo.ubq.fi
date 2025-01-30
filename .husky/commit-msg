@@ -1,3 +1,9 @@
 #!/usr/bin/env sh
 
-yarn commitlint --edit "$1"
+# Check if bun is available
+if command -v bun >/dev/null 2>&1; then
+  bun run commitlint --edit "$1"
+else
+  # Fallback to npm if bun is not available
+  npm run commitlint -- --edit "$1"
+fi

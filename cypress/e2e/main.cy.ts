@@ -92,14 +92,33 @@ describe("Homepage tests", () => {
     cy.visit("/");
     cy.log("Waiting for user orgs");
     cy.wait("@githubGetUserOrgs").then((interception) => {
-      cy.log(`User orgs response: ${JSON.stringify(interception.response?.body)}`);
+      const orgs = interception.response?.body;
+      cy.log(`User orgs response: ${JSON.stringify(orgs)}`);
+      // Store orgs for later validation
+      cy.wrap(orgs.map((org: { login: string }) => org.login)).as("orgLogins");
     });
     cy.get("#setBtn").click();
     cy.log("Display warning on empty WALLET_PRIVATE_KEY");
     cy.get("#walletPrivateKey").parent().find(".status-log").should("exist");
     cy.get("#walletPrivateKey").type("deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef");
-    cy.wait("@githubGetUserOrgs");
-    cy.get("#orgName").should("not.be.disabled").scrollIntoView().select("ubiquity", { force: true });
+    cy.log("Checking if organization dropdown is ready");
+    cy.get("#orgName", { timeout: 10000 })
+      .should("not.be.disabled")
+      .and("have.length.gt", 0)
+      .and(($select) => {
+        cy.get("@orgLogins").then((orgLogins) => {
+          const options = $select.find("option");
+          const optionValues = options
+            .toArray()
+            .map((opt) => (opt as HTMLOptionElement).value)
+            .filter(Boolean);
+          cy.log(`Available options: ${optionValues.join(", ")}`);
+          expect(optionValues).to.include("ubiquity");
+          expect(optionValues.length).to.equal(orgLogins.length);
+        });
+      })
+      .scrollIntoView()
+      .select("ubiquity", { force: true });
     cy.get("#setBtn").should(beVisible).click();
     cy.log("Waiting for API calls to complete");
     cy.wait("@githubPutContents").then((interception) => {
