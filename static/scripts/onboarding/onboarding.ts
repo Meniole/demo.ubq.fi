@@ -276,10 +276,6 @@ async function nextStep() {
   step1.classList.add("hidden");
   const step2 = document.getElementById("step2") as HTMLElement;
   step2.classList.remove("hidden");
-  const stepper = document.getElementById("stepper") as HTMLElement;
-  const steps = stepper.querySelectorAll("div.step");
-  steps[0].classList.remove("active");
-  steps[1].classList.add("active");
   setBtn.innerText = "Approve";
   currentStep = 2;
 
