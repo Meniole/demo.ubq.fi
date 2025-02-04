@@ -21,7 +21,6 @@ const walletPrivateKey = document.getElementById("walletPrivateKey") as HTMLInpu
 const setBtn = document.getElementById("setBtn") as HTMLButtonElement;
 const allowanceInput = document.getElementById("allowance") as HTMLInputElement;
 const chainIdSelect = document.getElementById("chainId") as HTMLSelectElement;
-const loader = document.querySelector(".loader-wrap") as HTMLElement;
 
 const APP_ID = 975031;
 const REPO_NAME = ".ubiquity-os";
@@ -67,11 +66,6 @@ function getTextBox(text: string) {
   return `${strLen > 140 ? strLen : 140}px`;
 }
 
-function resetToggle() {
-  (walletPrivateKey.parentNode?.querySelector(STATUS_LOG) as HTMLElement).innerHTML = "";
-  (orgName.parentNode?.querySelector(STATUS_LOG) as HTMLElement).innerHTML = "";
-}
-
 function classListToggle(targetElem: HTMLElement, target: "error" | "warn" | "success", inputElem?: HTMLInputElement | HTMLTextAreaElement) {
   classes.forEach((className) => targetElem.classList.remove(className));
   targetElem.classList.add(target);
@@ -83,7 +77,6 @@ function classListToggle(targetElem: HTMLElement, target: "error" | "warn" | "su
 }
 
 function statusToggle(type: "error" | "warn" | "success", message: string) {
-  resetToggle();
   const statusKeyElements = document.getElementsByClassName("statusKey");
   Array.from(statusKeyElements).forEach((element) => {
     const statusKeyElement = element as HTMLElement;
@@ -93,7 +86,6 @@ function statusToggle(type: "error" | "warn" | "success", message: string) {
 }
 
 function focusToggle(targetElem: HTMLInputElement | HTMLTextAreaElement, type: "error" | "warn" | "success", message: string) {
-  resetToggle();
   const infoElem = targetElem.parentNode?.querySelector(STATUS_LOG) as HTMLElement;
   infoElem.innerHTML = message;
   classListToggle(infoElem, type, targetElem);
@@ -103,10 +95,8 @@ function focusToggle(targetElem: HTMLInputElement | HTMLTextAreaElement, type: "
 function toggleLoader(state: "start" | "end") {
   if (state === "start") {
     setBtn.disabled = true;
-    loader.style.display = "flex";
   } else {
     setBtn.disabled = false;
-    loader.style.display = "none";
   }
 }
 
@@ -187,7 +177,7 @@ async function handleInstall(
     const combinedConf = Object.assign(updatedConf, defaultConf);
 
     const stringified = btoa(stringifyYAML(combinedConf));
-    outKey.value = stringified;
+    // outKey.value = stringified;
     const { status } = await octokit.repos.createOrUpdateFileContents({
       owner: orgName.value,
       repo: REPO_NAME,
@@ -196,10 +186,12 @@ async function handleInstall(
       message: `${crypto.randomUUID()}`,
     });
 
+    console.trace(status);
+
     if (status === 201 || status === 200) {
       singleToggle("success", `Success: private key is updated.`);
     } else {
-      singleToggle("success", `Success: private key is upto date.`);
+      singleToggle("success", `Success: private key is up to date.`);
     }
 
     await nextStep();
@@ -252,7 +244,6 @@ function setInputListeners() {
   inputs.forEach((input) => {
     input.addEventListener("input", (e) => {
       inputClasses.forEach((className) => (e.target as HTMLInputElement).classList.remove(className));
-      (((e.target as HTMLInputElement).parentNode as HTMLElement).querySelector(STATUS_LOG) as HTMLElement).innerHTML = "";
     });
   });
 }

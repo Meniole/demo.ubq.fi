@@ -21,9 +21,10 @@ async function gitHubLoginButtonHandler() {
     console.error("Error logging in:", error);
   }
 }
+const gitHubLoginButtonWrapper = document.createElement("div");
 const gitHubLoginButton = document.createElement("button");
 export async function renderGitHubLoginButton() {
-  const stepContainer = document.getElementById("overlay-item-container") as HTMLDivElement;
+  const mainView = document.getElementsByTagName("main")[0];
   const overlay = document.getElementById("overlay") as HTMLDivElement;
   const setButton = document.getElementById("setBtn") as HTMLButtonElement;
 
@@ -32,12 +33,12 @@ export async function renderGitHubLoginButton() {
     overlay?.classList.add("hidden");
     return;
   }
-
+  gitHubLoginButtonWrapper.appendChild(gitHubLoginButton);
   gitHubLoginButton.id = "github-login-button";
-  gitHubLoginButton.innerHTML = "<span>Connect</span><span class='full'>&nbsp;To GitHub</span>";
+  gitHubLoginButton.innerHTML = "<span>Login</span><span class='full'>&nbsp;With GitHub</span>";
   gitHubLoginButton.addEventListener("click", gitHubLoginButtonHandler);
-  if (stepContainer) {
-    stepContainer.insertBefore(gitHubLoginButton, stepContainer.firstChild);
+  if (mainView) {
+    mainView.insertBefore(gitHubLoginButtonWrapper, mainView.firstChild);
   }
   setButton.disabled = false;
 }
