@@ -234,6 +234,9 @@
     overflow: hidden;
     display: inline-block;
     vertical-align: middle;
+    flex: 1;
+    white-space: nowrap;
+    text-align: right; /* Align text for readability */
   }
   input[type="radio"] {
     background-color: unset;
@@ -247,6 +250,11 @@
   }
   label {
     cursor: pointer;
+    flex: 0 1 auto;
+    white-space: nowrap;
+    min-width: 120px; /* Prevent labels from getting too small */
+    /* position: absolute; */
+    text-align: right;
   }
   .filters-container label:not([for="view-toggle"]):hover {
     background-color: #7f7f7f40;
@@ -328,6 +336,8 @@
     text-transform: uppercase;
     letter-spacing: 1px;
     background-color: #7f7f7f10;
+    flex: 1;
+    text-align: center;
   }
   button:hover {
     background-color: #7f7f7f20;
@@ -907,18 +917,36 @@
     padding: 8px 16px;
     border: 1px solid #7f7f7f80;
     appearance: initial;
+    flex: 2;
   }
   input {
     background-color: transparent;
     border-radius: 4px;
     border: 1px solid #7f7f7f80;
     padding: 8px 16px;
+    flex: 2;
+    /* display: flex; */
+    background-color: transparent;
+    border-radius: 4px;
+    padding: 8px 16px;
+    border: 1px solid #7f7f7f80;
+    appearance: initial;
+    flex: 2;
+    /* text-orientation: mixed; */
   }
-  #user-access {
-    width: calc(200% / 3);
+  main {
+    /* width: calc(200% / 3); */
+    /* display: flex; */
+    overflow: hidden;
   }
-  #user-access div {
-    margin: 8px auto;
+  main div {
+    margin: 4px auto;
+    /* flex-direction: row-reverse; */
+    display: flex;
+    /* align-items: center; */
+    /* gap: 0px; */
+    /* width: 100%; */
+    /* position: relative; */
   }
   textarea:disabled {
     background-color: transparent;
