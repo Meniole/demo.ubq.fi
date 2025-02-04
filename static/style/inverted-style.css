@@ -906,6 +906,7 @@
     border-radius: 4px;
     padding: 8px 16px;
     border: 1px solid #7f7f7f80;
+    appearance: initial;
   }
   input {
     background-color: transparent;
@@ -930,7 +931,7 @@
     font-size: 12px;
     position: absolute;
     width: calc(200% / 3);
-    pointer-events: initial !important;
+    pointer-events: initial;
     backdrop-filter: blur(8px);
     padding: 16px;
     border-radius: 4px;
