@@ -17,8 +17,7 @@ const inputClasses = ["input-warn", "input-error", "input-success"];
 const outKey = document.getElementById("outKey") as HTMLInputElement;
 const orgName = document.getElementById("orgName") as HTMLInputElement;
 const walletPrivateKey = document.getElementById("walletPrivateKey") as HTMLInputElement;
-// cspell: word ress // weird cspell bug seperating add and ress
-const setBtn = document.getElementById("setBtn") as HTMLButtonElement;
+const confirmButton = document.getElementById("confirmButton") as HTMLButtonElement;
 const allowanceInput = document.getElementById("allowance") as HTMLInputElement;
 const chainIdSelect = document.getElementById("chainId") as HTMLSelectElement;
 
@@ -94,9 +93,9 @@ function focusToggle(targetElem: HTMLInputElement | HTMLTextAreaElement, type: "
 
 function toggleLoader(state: "start" | "end") {
   if (state === "start") {
-    setBtn.disabled = true;
+    confirmButton.disabled = true;
   } else {
-    setBtn.disabled = false;
+    confirmButton.disabled = false;
   }
 }
 
@@ -170,20 +169,37 @@ async function handleInstall(
       return;
     }
 
-    const updatedConf = defaultConf;
+    // Create a deep copy of the default config to avoid mutation
+    const updatedConf = JSON.parse(JSON.stringify(defaultConf));
     setEvmSettings(encryptedValue, Number(chainIdSelect.value));
 
-    // combine configs (default + remote org wide)
-    const combinedConf = Object.assign(updatedConf, defaultConf);
+    // No need to combine since updatedConf is already a copy of defaultConf
+    const combinedConf = updatedConf;
 
     const stringified = btoa(stringifyYAML(combinedConf));
-    // outKey.value = stringified;
+
+    // Get the current file's SHA if it exists
+    let sha: string | undefined;
+    try {
+      const { data } = await octokit.repos.getContent({
+        owner: orgName.value,
+        repo: REPO_NAME,
+        path: KEY_PATH,
+      });
+      if (!Array.isArray(data)) {
+        sha = data.sha;
+      }
+    } catch (error) {
+      // File doesn't exist yet, which is fine
+    }
+
     const { status } = await octokit.repos.createOrUpdateFileContents({
       owner: orgName.value,
       repo: REPO_NAME,
       path: KEY_PATH,
       content: stringified,
       message: `${crypto.randomUUID()}`,
+      ...(sha ? { sha } : {}),
     });
 
     console.trace(status);
@@ -263,11 +279,7 @@ async function nextStep() {
     }
   }
 
-  const step1 = document.getElementById("step1") as HTMLElement;
-  step1.classList.add("hidden");
-  const step2 = document.getElementById("step2") as HTMLElement;
-  step2.classList.remove("hidden");
-  setBtn.innerText = "Approve";
+  confirmButton.innerText = "Approve";
   currentStep = 2;
 
   if (!window.ethereum) {
@@ -471,7 +483,7 @@ async function init() {
       await renderGitHubLoginButton();
       await populateOrgs();
 
-      setBtn.addEventListener("click", async () => {
+      confirmButton.addEventListener("click", async () => {
         if (currentStep === 1) {
           await step1Handler();
         } else if (currentStep === 2) {

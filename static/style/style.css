@@ -933,11 +933,13 @@
     appearance: initial;
     flex: 2;
     /* text-orientation: mixed; */
+    vertical-align: middle;
   }
   main {
-    /* width: calc(200% / 3); */
+    width: calc(200% / 3);
     /* display: flex; */
     overflow: hidden;
+    min-width: 320px;
   }
   main div {
     margin: 4px auto;
@@ -947,6 +949,7 @@
     /* gap: 0px; */
     /* width: 100%; */
     /* position: relative; */
+    vertical-align: middle;
   }
   textarea:disabled {
     background-color: transparent;
@@ -978,5 +981,13 @@
   }
   button {
     padding: 8px 16px;
+  }
+  main[data-authenticated="false"] > div {
+    pointer-events: none;
+    opacity: 0.25;
+  }
+  main[data-authenticated="false"] > div:first-child {
+    pointer-events: initial;
+    opacity: initial;
   }
 }
