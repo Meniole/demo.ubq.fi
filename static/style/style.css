@@ -238,6 +238,7 @@
     /* flex: 1; */
     /* white-space: nowrap; */
     /* text-align: right; */ /* Align text for readability */
+    /* backdrop-filter: blur(12px); */
   }
   input[type="radio"] {
     background-color: unset;
@@ -936,6 +937,7 @@
     /* text-orientation: mixed; */
     vertical-align: middle;
     width: 100%;
+    /* backdrop-filter: blur(12px); */
   }
   main {
     width: calc(200% / 3);
@@ -983,7 +985,7 @@
   }
   button {
     padding: 8px 16px;
-    backdrop-filter: blur(12px);
+    /* backdrop-filter: blur(12px); */
   }
   main[data-authenticated="false"] > div {
     pointer-events: none;
@@ -995,5 +997,13 @@
   }
   input:-internal-autofill-selected {
     background: transparent !important;
+  }
+  main > div > * {
+    backdrop-filter: blur(12px);
+  }
+  input:focus-visible,
+  select:focus-visible,
+  button:focus-visible {
+    outline-offset: -1px;
   }
 }
