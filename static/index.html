@@ -1,75 +1,126 @@
 <!doctype html>
 <html>
   <head>
-    <title>Onboarding</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link href="out/styles/onboarding/onboarding.css" rel="stylesheet" />
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="style/style.css" />
+    <link rel="stylesheet" href="style/inverted-style.css" />
+    <link rel="stylesheet" href="style/special.css" />
+    <link rel="icon" href="favicon.svg" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="/icon-1000x1000.png" />
+    <link rel="canonical" href="https://onboard.ubq.fi" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="A tool to help you set up your instance of UbiquityOS." />
+    <meta name="robots" content="index,follow" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000410" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f0f0f0" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:creator" content="@UbiquityDAO" />
+    <meta name="twitter:description" content="A tool to help you set up your instance of UbiquityOS." />
+    <meta name="twitter:title" content="Onboarding | UbiquityOS" />
+    <meta property="og:description" content="A tool to help you set up your instance of UbiquityOS." />
+    <meta property="og:site_name" content="Onboarding | UbiquityOS" />
+    <meta property="og:title" content="Onboarding | UbiquityOS" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://onboard.ubq.fi" />
+    <meta property="twitter:domain" content="onboard.ubq.fi" />
+    <meta property="twitter:url" content="https://onboard.ubq.fi" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no" />
+    <link rel="manifest" href="dist/manifest.json" />
+    <title>Onboarding | UbiquityOS</title>
   </head>
-  <body style="justify-content: start">
-    <div class="container" id="user-access">
-      <h1 class="title">Onboarding</h1>
-      <div id="stepper" class="stepper">
-        <div class="step active">
-          <span class="step-number">1</span>
-          <span class="step-label">CONFIG</span>
-        </div>
-        <div class="step">
-          <span class="step-number">2</span>
-          <span class="step-label">APPROVE</span>
-        </div>
+  <body>
+    <background>
+      <div class="gradient"></div>
+      <div class="gradient"></div>
+      <div id="grid"></div>
+    </background>
+    <main>
+      <div>
+        <label for="chainId">Network</label>
+        <select id="chainId">
+          <option value="1">Ethereum</option>
+          <option value="10">Optimism</option>
+          <option value="56">BNB Smart Chain</option>
+          <option value="100">Gnosis</option>
+          <option value="137">Polygon</option>
+          <option value="324">zkSync Era</option>
+          <option value="480">WorldChain</option>
+          <option value="8453">Base</option>
+          <option value="42161">Arbitrum One</option>
+          <option value="42220">Celo</option>
+          <option value="43114">Avalanche C-Chain</option>
+          <option value="81457">Blast</option>
+          <option value="7777777">Zora</option>
+        </select>
       </div>
-      <div id="step1" class="step-container">
-        <div class="overlay" id="overlay">
-          <div id="overlay-item-container"> </div>
-        </div>
-        <div class="mb-3">
-          <label for="chainId" class="form-label">CHAIN_ID</label>
-          <select class="form-control" id="chainId">
-            <option value="1">Ethereum Mainnet</option>
-            <option value="10">Optimism</option>
-            <option value="100">Gnosis Mainnet</option>
-          </select>
-          <span class="status-log"></span>
-        </div>
-        <div class="mb-3">
-          <label for="walletPrivateKey" class="form-label">WALLET_PRIVATE_KEY</label>
-          <input type="text" class="form-control" id="walletPrivateKey" />
-          <span class="status-log"></span>
-        </div>
-        <div class="mb-3">
-          <label for="orgName" class="form-label">ORG_NAME</label>
-          <select class="form-control" id="orgName" disabled> </select>
-          <span class="status-log"></span>
-        </div>
-        <div class="mb-3 pos-rel">
-          <label for="outKey" class="form-label">OUTPUT</label>
-          <div class="out-file">.ubiquity-os.config.yml</div>
-          <textarea type="text" class="form-control" id="outKey" disabled="true"></textarea>
-        </div>
+      <div>
+        <label for="walletPrivateKey">EVM Wallet Private Key</label>
+        <input type="text" id="walletPrivateKey" />
       </div>
-      <div id="step2" class="step-container hidden">
-        <div class="mb-3">
-          <label for="allowance" class="form-label">ALLOWANCE AMOUNT</label>
-          <div>
-            <input type="text" class="form-control" style="max-width: 200px" id="allowance" />
-            <span style="font-size: 1.2rem; color: #808080">DAI</span>
-            <span class="status-log"></span>
-          </div>
-        </div>
+      <div>
+        <label for="orgName">Organization Name</label>
+        <select id="orgName" disabled></select>
       </div>
+      <div>
+        <label for="allowance">WXDAI Allowance</label>
+        <input type="number" id="allowance" value="100000" />
+      </div>
+      <div>
+        <button type="button" id="confirmButton">Confirm</button>
+      </div>
+    </main>
+    <textarea type="text" id="outKey" disabled spellcheck="false"></textarea>
+    <div id="toolbar" class="toolbar" data-authenticated="false">
+      <div id="branding">
+        <svg id="logo" viewBox="0 0 860 980" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M838.451 229.167C851.511 237.002 860 251.366 860 266.382V713.618C860 729.287 851.511 742.998 838.451 750.833L451.222 974.124C438.162 981.959 421.838 981.959 408.778 974.124L21.549 750.833C8.48899 742.998 0 728.634 0 713.618V266.382C0 250.713 8.48899 237.002 21.549 229.167L408.125 5.87608C414.655 1.95869 422.491 0 429.673 0C437.509 0 444.692 1.95869 451.222 5.87608L838.451 229.167ZM770.059 272.817C780.932 279.34 788 291.3 788 303.804V676.196C788 689.243 780.932 700.66 770.059 707.183L447.669 893.107C436.796 899.631 423.204 899.631 412.331 893.107L89.9408 707.183C79.0676 700.66 72 688.699 72 676.196V303.804C72 290.757 79.0676 279.34 89.9408 272.817L411.787 86.8927C417.224 83.6309 423.748 82 429.728 82C436.252 82 442.232 83.6309 447.669 86.8927L770.059 272.817Z"
+          />
+        </svg>
 
-      <div class="mb-3">
-        <label for="statusKey" class="form-label">STATUS</label>
-        <input type="text" class="form-control" id="statusKey" disabled="true" />
+        <span>UbiquityOS | Onboarding</span>
       </div>
-      <div class="mb-3 loader-wrap" style="display: none">
-        <span class="loader-x"></span>
-      </div>
-      <div class="btn-container">
-        <button type="button" class="btn btn-primary mb-3" id="setBtn">🌐 Set</button>
+      <div id="authentication"></div>
+    </div>
+    <div id="preview-modal" class="preview">
+      <div class="preview-content">
+        <div class="preview-header">
+          <button class="close-preview">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+              <path d="m336-280-56-56 144-144-144-143 56-56 144 144 143-144 56 56-144 143 144 144-56 56-143-144-144 144Z" />
+            </svg>
+          </button>
+          <a id="preview-title-anchor" target="_blank">
+            <h1 id="preview-title"></h1>
+            <span class="error">
+              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#808080">
+                <path
+                  d="M109-120q-11 0-20-5.5T75-140q-5-9-5.5-19.5T75-180l370-640q6-10 15.5-15t19.5-5q10 0 19.5 5t15.5 15l370 640q6 10 5.5 20.5T885-140q-5 9-14 14.5t-20 5.5H109Zm69-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm0-120q17 0 28.5-11.5T520-400v-120q0-17-11.5-28.5T480-560q-17 0-28.5 11.5T440-520v120q0 17 11.5 28.5T480-360Zm0-100Z"
+                />
+              </svg>
+            </span>
+            <span class="open-new-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+                <path
+                  d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"
+                />
+              </svg>
+            </span>
+          </a>
+        </div>
+        <div class="preview-body">
+          <div id="preview-body-inner" class="preview-body-inner"></div>
+        </div>
       </div>
     </div>
-    <script src="out/scripts/onboarding/onboarding.js" type="application/javascript"></script>
+    <div id="bottom-bar" class="toolbar">
+      <div class="statusKey"></div>
+    </div>
+    <div id="bottom-right">
+      <a href="#" id="git-revision" target="_blank"></a>
+    </div>
+    <script src="dist/scripts/onboarding/onboarding.js" type="application/javascript"></script>
   </body>
 </html>

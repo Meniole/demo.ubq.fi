@@ -9,6 +9,8 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 declare const FRONTEND_URL: string;
 
+const mainView = document.getElementsByTagName("main")[0];
+
 async function gitHubLoginButtonHandler() {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "github",
@@ -21,23 +23,24 @@ async function gitHubLoginButtonHandler() {
     console.error("Error logging in:", error);
   }
 }
+const gitHubLoginButtonWrapper = document.createElement("div");
 const gitHubLoginButton = document.createElement("button");
 export async function renderGitHubLoginButton() {
-  const stepContainer = document.getElementById("overlay-item-container") as HTMLDivElement;
-  const overlay = document.getElementById("overlay") as HTMLDivElement;
-  const setButton = document.getElementById("setBtn") as HTMLButtonElement;
-
   // No need to show the OAuth button if we are already logged in
   if (getSessionToken()) {
-    overlay?.classList.add("hidden");
+    mainView.setAttribute("data-authenticated", "true");
     return;
+  } else {
+    mainView.setAttribute("data-authenticated", "false");
   }
 
+  const setButton = document.getElementById("confirmButton") as HTMLButtonElement;
+  gitHubLoginButtonWrapper.appendChild(gitHubLoginButton);
   gitHubLoginButton.id = "github-login-button";
-  gitHubLoginButton.innerHTML = "<span>Connect</span><span class='full'>&nbsp;To GitHub</span>";
+  gitHubLoginButton.innerHTML = "<span>Login</span><span class='full'>&nbsp;With GitHub</span>";
   gitHubLoginButton.addEventListener("click", gitHubLoginButtonHandler);
-  if (stepContainer) {
-    stepContainer.insertBefore(gitHubLoginButton, stepContainer.firstChild);
+  if (mainView) {
+    mainView.insertBefore(gitHubLoginButtonWrapper, mainView.firstChild);
   }
   setButton.disabled = false;
 }

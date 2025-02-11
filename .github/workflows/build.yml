@@ -18,15 +18,15 @@ jobs:
         # with:
         # submodules: "recursive" # Ensures submodules are checked out
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v1
         with:
-          node-version: 20.10.0
+          bun-version: latest
 
       - name: Build
         run: |
-          yarn
-          yarn build
+          bun install
+          bun run build
         env: # Set environment variables for the build
           FRONTEND_URL: "https://onboard.ubq.fi"
           SUPABASE_URL: "https://wfzpewmlyiozupulbuur.supabase.co"

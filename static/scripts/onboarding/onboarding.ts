@@ -17,11 +17,9 @@ const inputClasses = ["input-warn", "input-error", "input-success"];
 const outKey = document.getElementById("outKey") as HTMLInputElement;
 const orgName = document.getElementById("orgName") as HTMLInputElement;
 const walletPrivateKey = document.getElementById("walletPrivateKey") as HTMLInputElement;
-// cspell: word ress // weird cspell bug seperating add and ress
-const setBtn = document.getElementById("setBtn") as HTMLButtonElement;
+const confirmButton = document.getElementById("confirmButton") as HTMLButtonElement;
 const allowanceInput = document.getElementById("allowance") as HTMLInputElement;
 const chainIdSelect = document.getElementById("chainId") as HTMLSelectElement;
-const loader = document.querySelector(".loader-wrap") as HTMLElement;
 
 const APP_ID = 975031;
 const REPO_NAME = ".ubiquity-os";
@@ -67,11 +65,6 @@ function getTextBox(text: string) {
   return `${strLen > 140 ? strLen : 140}px`;
 }
 
-function resetToggle() {
-  (walletPrivateKey.parentNode?.querySelector(STATUS_LOG) as HTMLElement).innerHTML = "";
-  (orgName.parentNode?.querySelector(STATUS_LOG) as HTMLElement).innerHTML = "";
-}
-
 function classListToggle(targetElem: HTMLElement, target: "error" | "warn" | "success", inputElem?: HTMLInputElement | HTMLTextAreaElement) {
   classes.forEach((className) => targetElem.classList.remove(className));
   targetElem.classList.add(target);
@@ -83,14 +76,15 @@ function classListToggle(targetElem: HTMLElement, target: "error" | "warn" | "su
 }
 
 function statusToggle(type: "error" | "warn" | "success", message: string) {
-  resetToggle();
-  const statusKey = document.getElementById("statusKey") as HTMLInputElement;
-  classListToggle(statusKey, type);
-  statusKey.value = message;
+  const statusKeyElements = document.getElementsByClassName("statusKey");
+  Array.from(statusKeyElements).forEach((element) => {
+    const statusKeyElement = element as HTMLElement;
+    classListToggle(statusKeyElement, type);
+    statusKeyElement.innerText = message;
+  });
 }
 
 function focusToggle(targetElem: HTMLInputElement | HTMLTextAreaElement, type: "error" | "warn" | "success", message: string) {
-  resetToggle();
   const infoElem = targetElem.parentNode?.querySelector(STATUS_LOG) as HTMLElement;
   infoElem.innerHTML = message;
   classListToggle(infoElem, type, targetElem);
@@ -99,11 +93,9 @@ function focusToggle(targetElem: HTMLInputElement | HTMLTextAreaElement, type: "
 
 function toggleLoader(state: "start" | "end") {
   if (state === "start") {
-    setBtn.disabled = true;
-    loader.style.display = "flex";
+    confirmButton.disabled = true;
   } else {
-    setBtn.disabled = false;
-    loader.style.display = "none";
+    confirmButton.disabled = false;
   }
 }
 
@@ -131,6 +123,7 @@ async function sodiumEncryptedSeal(publicKey: string, secret: string) {
     setEvmSettings(output, Number(chainIdSelect.value));
     outKey.value = stringifyYAML(defaultConf);
     outKey.style.height = getTextBox(outKey.value);
+    outKey.disabled = false;
     encryptedValue = output;
     singleToggle("success", `Success: Key Encryption is ok.`);
   } catch (error: unknown) {
@@ -176,26 +169,45 @@ async function handleInstall(
       return;
     }
 
-    const updatedConf = defaultConf;
+    // Create a deep copy of the default config to avoid mutation
+    const updatedConf = JSON.parse(JSON.stringify(defaultConf));
     setEvmSettings(encryptedValue, Number(chainIdSelect.value));
 
-    // combine configs (default + remote org wide)
-    const combinedConf = Object.assign(updatedConf, defaultConf);
+    // No need to combine since updatedConf is already a copy of defaultConf
+    const combinedConf = updatedConf;
 
     const stringified = btoa(stringifyYAML(combinedConf));
-    outKey.value = stringified;
+
+    // Get the current file's SHA if it exists
+    let sha: string | undefined;
+    try {
+      const { data } = await octokit.repos.getContent({
+        owner: orgName.value,
+        repo: REPO_NAME,
+        path: KEY_PATH,
+      });
+      if (!Array.isArray(data)) {
+        sha = data.sha;
+      }
+    } catch (error) {
+      // File doesn't exist yet, which is fine
+    }
+
     const { status } = await octokit.repos.createOrUpdateFileContents({
       owner: orgName.value,
       repo: REPO_NAME,
       path: KEY_PATH,
       content: stringified,
       message: `${crypto.randomUUID()}`,
+      ...(sha ? { sha } : {}),
     });
+
+    console.trace(status);
 
     if (status === 201 || status === 200) {
       singleToggle("success", `Success: private key is updated.`);
     } else {
-      singleToggle("success", `Success: private key is upto date.`);
+      singleToggle("success", `Success: private key is up to date.`);
     }
 
     await nextStep();
@@ -248,7 +260,6 @@ function setInputListeners() {
   inputs.forEach((input) => {
     input.addEventListener("input", (e) => {
       inputClasses.forEach((className) => (e.target as HTMLInputElement).classList.remove(className));
-      (((e.target as HTMLInputElement).parentNode as HTMLElement).querySelector(STATUS_LOG) as HTMLElement).innerHTML = "";
     });
   });
 }
@@ -268,15 +279,7 @@ async function nextStep() {
     }
   }
 
-  const step1 = document.getElementById("step1") as HTMLElement;
-  step1.classList.add("hidden");
-  const step2 = document.getElementById("step2") as HTMLElement;
-  step2.classList.remove("hidden");
-  const stepper = document.getElementById("stepper") as HTMLElement;
-  const steps = stepper.querySelectorAll("div.step");
-  steps[0].classList.remove("active");
-  steps[1].classList.add("active");
-  setBtn.innerText = "Approve";
+  confirmButton.innerText = "Approve";
   currentStep = 2;
 
   if (!window.ethereum) {
@@ -484,7 +487,7 @@ async function init() {
       await renderGitHubLoginButton();
       await populateOrgs();
 
-      setBtn.addEventListener("click", async () => {
+      confirmButton.addEventListener("click", async () => {
         if (currentStep === 1) {
           await step1Handler();
         } else if (currentStep === 2) {
@@ -502,3 +505,6 @@ async function init() {
 init().catch((error) => {
   console.error(error);
 });
+
+import { grid } from "../the-grid";
+grid(document.getElementById("grid") as HTMLElement, () => document.body.classList.add("grid-loaded")); // @DEV: display grid background
