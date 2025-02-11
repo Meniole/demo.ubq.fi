@@ -216,28 +216,28 @@
   .labels > img {
     margin-left: 4px;
   }
-  label:not([for="view-toggle"]) {
+  label {
     line-height: 1.25;
     padding: 8px 16px;
     border-radius: 4px;
     margin: 0 2px 0;
     font-size: 12px;
-    text-align: center;
-    white-space: nowrap;
+    /* text-align: center; */
+    /* white-space: nowrap; */
     background-color: #80808020;
     letter-spacing: 0.5px;
-    flex-grow: 4;
-    justify-content: center;
-    display: flex;
-    align-items: center;
-    height: 16px;
+    /* flex-grow: 4; */
+    /* justify-content: center; */
+    /* display: flex; */
+    /* align-items: center; */
+    /* height: 16px; */
     text-overflow: ellipsis;
     overflow: hidden;
-    display: inline-block;
-    vertical-align: middle;
-    flex: 1;
-    white-space: nowrap;
-    text-align: right; /* Align text for readability */
+    /* display: inline-block; */
+    /* vertical-align: middle; */
+    /* flex: 1; */
+    /* white-space: nowrap; */
+    /* text-align: right; */ /* Align text for readability */
   }
   input[type="radio"] {
     background-color: unset;
@@ -251,9 +251,9 @@
   }
   label {
     cursor: pointer;
-    flex: 0 1 auto;
+    /* flex: 0 1 auto; */
     white-space: nowrap;
-    min-width: 120px; /* Prevent labels from getting too small */
+    min-width: 135px; /* Prevent labels from getting too small */
     /* position: absolute; */
     text-align: right;
   }
@@ -921,20 +921,21 @@
     flex: 2;
   }
   input {
-    background-color: transparent;
-    border-radius: 4px;
-    border: 1px solid #80808080;
-    padding: 8px 16px;
-    flex: 2;
+    /* background-color: transparent; */
+    /* border-radius: 4px; */
+    /* border: 1px solid #80808080; */
+    /* padding: 8px 16px; */
+    /* flex: 2; */
     /* display: flex; */
     background-color: transparent;
     border-radius: 4px;
     padding: 8px 16px;
     border: 1px solid #80808080;
     appearance: initial;
-    flex: 2;
+    /* flex: 2; */
     /* text-orientation: mixed; */
     vertical-align: middle;
+    width: 100%;
   }
   main {
     width: calc(200% / 3);
@@ -976,12 +977,13 @@
   html {
     height: 100vh;
   }
-  label:not([for="view-toggle"]) {
-    vertical-align: middle;
-    padding: 8px 16px;
+  label {
+    /* vertical-align: middle; */
+    /* padding: 8px 16px; */
   }
   button {
     padding: 8px 16px;
+    backdrop-filter: blur(12px);
   }
   main[data-authenticated="false"] > div {
     pointer-events: none;
