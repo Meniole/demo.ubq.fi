@@ -11,8 +11,11 @@ declare global {
 // Create virtual console logger
 const virtualLogger = {
   log: (...args: unknown[]) => {
-    const loggerElement = document.getElementById("logger");
+    const loggerElement = document.getElementById("logger") as HTMLPreElement;
     if (loggerElement) {
+      // Create a new span for the log entry
+      const logEntry = document.createElement("div");
+
       // Convert arguments to string, handling objects and arrays
       const logString =
         args
@@ -24,8 +27,10 @@ const virtualLogger = {
           })
           .join(" ") + "\n";
 
-      // Append new log to existing content
-      loggerElement.textContent += logString;
+      logEntry.textContent = logString;
+
+      // Append new log entry
+      loggerElement.appendChild(logEntry);
 
       // Auto-scroll to bottom
       loggerElement.scrollTop = loggerElement.scrollHeight;

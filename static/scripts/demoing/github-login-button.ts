@@ -15,66 +15,22 @@ const EVM_NETWORK_KEY_NAME = "evmNetworkId";
 import defaultConf from "../../types/default-configuration.yml";
 
 const chainIdSelect = document.getElementById("chainId") as HTMLSelectElement;
-const STATUS_LOG = ".status-log";
-const classes = ["error", "warn", "success"];
-const inputClasses = ["input-warn", "input-error", "input-success"];
 
-function classListToggle(targetElem: HTMLElement, target: "error" | "warn" | "success", inputElem?: HTMLInputElement | HTMLTextAreaElement) {
-  classes.forEach((className) => targetElem.classList.remove(className));
-  targetElem.classList.add(target);
-
-  if (inputElem) {
-    inputClasses.forEach((className) => inputElem.classList.remove(className));
-    inputElem.classList.add(`input-${target}`);
-  }
-}
-
-function statusToggle(type: "error" | "warn" | "success", message: string) {
-  const statusKeyElements = document.getElementsByClassName("statusKey");
-  Array.from(statusKeyElements).forEach((element) => {
-    const statusKeyElement = element as HTMLElement;
-    classListToggle(statusKeyElement, type);
-    statusKeyElement.innerText = message;
-  });
-}
-
-function singleToggle(type: "error" | "warn" | "success", message: string, focusElem?: HTMLInputElement | HTMLTextAreaElement) {
-  statusToggle(type, message);
-
-  if (focusElem) {
-    const infoElem = focusElem.parentNode?.querySelector(STATUS_LOG) as HTMLElement;
-    infoElem.innerHTML = message;
-    classListToggle(infoElem, type, focusElem);
-    focusElem.focus();
-  }
-}
 async function sodiumEncryptedSeal(publicKey: string, secret: string) {
-  try {
-    await _sodium.ready;
-    const sodium = _sodium;
+  await _sodium.ready;
+  const sodium = _sodium;
 
-    if (!publicKey) {
-      singleToggle("error", `Error: You need to enter public key.`);
-      return;
-    }
-
-    const binkey = sodium.from_base64(publicKey, sodium.base64_variants.URLSAFE_NO_PADDING);
-    const binsec = sodium.from_string(secret);
-    const encBytes = sodium.crypto_box_seal(binsec, binkey);
-    const output = sodium.to_base64(encBytes, sodium.base64_variants.URLSAFE_NO_PADDING);
-
-    // Update config and UI
-    setEvmSettings(output, Number(chainIdSelect.value));
-
-    singleToggle("success", `Success: Key Encryption is ok.`);
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      singleToggle("error", `Error: ${error.message}`);
-    } else {
-      singleToggle("error", `Error: ${JSON.stringify(error)}`);
-    }
-    throw error;
+  if (!publicKey) {
+    return;
   }
+
+  const binkey = sodium.from_base64(publicKey, sodium.base64_variants.URLSAFE_NO_PADDING);
+  const binsec = sodium.from_string(secret);
+  const encBytes = sodium.crypto_box_seal(binsec, binkey);
+  const output = sodium.to_base64(encBytes, sodium.base64_variants.URLSAFE_NO_PADDING);
+
+  // Update config and UI
+  setEvmSettings(output, Number(chainIdSelect.value));
 }
 
 function stringifyYAML(value: Record<string, unknown>): string {

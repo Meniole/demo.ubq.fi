@@ -341,6 +341,7 @@
     flex: 1;
     text-align: center;
     /* text-decoration: none; */
+    backdrop-filter: blur(12px);
   }
   button:hover {
     background-color: #7f7f7f20;
@@ -1073,19 +1074,39 @@
     margin-right: 12px;
   }
   #logger {
-    /* background: red; */
-    /* height: 100vh; */
     width: calc(200% / 3);
-    margin-right: auto;
-    /* margin-left: calc(100% / 3); */
-    /* border: 1px inset #000000; */
-    margin: auto;
-    margin-right: 0;
-    font-family: monospace;
     text-align: right;
+    text-overflow: ellipsis;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow-y: auto;
+    max-height: 100vh;
+    margin-right: 8px;
+    margin-left: auto;
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black);
+    mask-image: linear-gradient(to bottom, transparent, black);
+    /* height: 48px; */
+  }
+
+  #logger > div {
     line-height: 1.5;
-    margin-top: 64px;
-    margin-right: 16px;
+    font-family: monospace;
+    opacity: 0;
+    animation: fadeIn 0.3s ease-in forwards;
+    margin: 4px 0;
+    white-space: nowrap;
+    word-break: break-all;
+    max-width: 100%;
     color: #7f7f7f;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 }
