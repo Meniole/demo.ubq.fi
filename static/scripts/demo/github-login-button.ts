@@ -151,6 +151,13 @@ export async function renderGitHubLoginButton() {
       const repo = await createTestRepository(octokit);
       logger.log(`Repository setup complete: ${repo.html_url}`);
 
+      // Show and configure first issue button
+      const firstIssueLink = document.getElementById("first-issue-link") as HTMLAnchorElement;
+      if (firstIssueLink) {
+        firstIssueLink.href = `${repo.html_url}/issues/1`;
+        firstIssueLink.style.display = "inline-block";
+      }
+
       logger.log("Test environment setup complete!");
       return;
     } catch (error) {

@@ -180,7 +180,7 @@
     color: #404040;
     font-size: 12px;
     letter-spacing: 0.5px;
-    text-rendering: geometricPrecision;
+    /* text-rendering: geometricPrecision; */
     top: 0;
     right: 0;
   }
@@ -190,7 +190,7 @@
     color: #404040;
     font-size: 12px;
     letter-spacing: 0.5px;
-    text-rendering: geometricPrecision;
+    /* text-rendering: geometricPrecision; */
     top: 0;
     right: 0;
   }
@@ -1079,5 +1079,28 @@
   #installButton span:first-child {
     position: relative;
   }
+
+  /* .first-issue-button {
+    display: block;
+    width: 100%;
+    margin: 8px auto;
+    text-align: center;
+  }
+
+  #firstIssueButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    font-size: 16px;
+    padding: 16px 0;
+  }
+
+  #firstIssueButton svg {
+    width: 24px;
+    height: 24px;
+    margin-right: 12px;
+    fill: currentColor;
+  } */
 
 }
