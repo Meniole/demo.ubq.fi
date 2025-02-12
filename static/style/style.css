@@ -180,7 +180,7 @@
     color: #bfbfbf;
     font-size: 12px;
     letter-spacing: 0.5px;
-    text-rendering: geometricPrecision;
+    /* text-rendering: geometricPrecision; */
     top: 0;
     right: 0;
   }
@@ -190,7 +190,7 @@
     color: #bfbfbf;
     font-size: 12px;
     letter-spacing: 0.5px;
-    text-rendering: geometricPrecision;
+    /* text-rendering: geometricPrecision; */
     top: 0;
     right: 0;
   }
