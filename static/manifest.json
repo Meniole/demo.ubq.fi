@@ -1,6 +1,6 @@
 {
-  "name": "Demoing | UbiquityOS",
-  "short_name": "Demoing",
+  "name": "Demo | UbiquityOS",
+  "short_name": "Demo",
   "description": "Set up your instance of UbiquityOS.",
   "start_url": "/",
   "display": "standalone",

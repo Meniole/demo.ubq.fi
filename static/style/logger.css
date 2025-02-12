@@ -6,12 +6,12 @@
   text-overflow: ellipsis;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: end;
   margin-right: 16px;
   margin-left: auto;
 }
 #logger {
-  height: 24px;
+  height: 12px;
   overflow: hidden;
   transition: height 0.5s cubic-bezier(0, 1, 1, 1);
   mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
@@ -20,17 +20,22 @@
 #logger > div::before {
   content: "› ";
 }
+#logger > div::after {
+  content: "⬡ ";
+}
 #logger > div {
-  line-height: 1.5;
+  line-height: 1;
   font-family: monospace;
   opacity: 0;
   animation: fadeIn 1s cubic-bezier(0, 1, 1, 1) forwards 0.5s;
-  margin: 4px 0;
+  padding: 4px 0;
   white-space: nowrap;
   word-break: break-all;
-  max-width: 100%;
+  /* max-width: 100%; */
   color: #808080;
   transition: all 1.5s cubic-bezier(0, 1, 1, 1);
+  /* height: 24px; */
+  font-size: 12px;
 }
 
 #logger > div:last-child {

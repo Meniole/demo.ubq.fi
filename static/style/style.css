@@ -947,6 +947,7 @@
     /* display: flex; */
     /* overflow: hidden; */
     /* min-width: 320px; */
+    max-width: 640px;
   }
   main div {
     margin: 4px auto;
@@ -954,7 +955,7 @@
     /* display: flex; */
     /* align-items: center; */
     /* gap: 0px; */
-    width: 100%;
+    /* width: 100%; */
     /* position: relative; */
     vertical-align: middle;
   }
@@ -990,10 +991,12 @@
     /* padding: 8px 16px; */
     /* backdrop-filter: blur(12px); */
     font-size: 16px;
-    padding: 16px 8px;
+    padding: 16px 0;
   }
   a {
     text-decoration: none;
+    /* width: 100%; */
+    /* display: block; */
   }
   main[data-authenticated="false"] #install {
     pointer-events: none;
@@ -1008,8 +1011,8 @@
   input:-internal-autofill-selected {
     background: transparent !important;
   }
-  main > div > * {
-    /* backdrop-filter: blur(12px); */
+  .explanation > * {
+    padding: 0px 32px;
   }
   input:focus-visible,
   select:focus-visible,
@@ -1018,7 +1021,7 @@
   }
 
   .explanation {
-    max-width: 640px;
+    /* max-width: 640px; */
     /* margin: 0 auto 30px; */
     /* padding: 20px; */
     border: 1px solid #80808020;
@@ -1027,13 +1030,13 @@
   }
 
   .explanation h2 {
-    margin: 0 0 15px;
+    /* margin: 0 0 15px; */
     font-size: 24px;
     text-align: center;
   }
 
   .explanation p {
-    margin: 15px 0;
+    /* margin: 15px 0; */
     line-height: 1.5;
     font-size: 16px;
   }
@@ -1041,7 +1044,7 @@
   .explanation ol,
   .explanation ul {
     /* margin: 15px 0; */
-    /* padding-left: 25px; */
+    padding-left: 60px;
   }
 
   .explanation li {
@@ -1054,8 +1057,8 @@
     opacity: 1;
   }
   main > div {
-    display: inline-block;
-    padding: 24px 16px;
+    /* display: inline-block; */
+    /* padding: 24px 16px; */
   }
   .controls > div {
     /* display: block; */
@@ -1072,6 +1075,9 @@
   .controls > div svg {
     width: unset;
     margin-right: 12px;
+  }
+  #installButton span:first-child {
+    position: relative;
   }
 
 }

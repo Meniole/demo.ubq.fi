@@ -34,12 +34,12 @@ const virtualLogger = {
 
       // Calculate new height based on number of entries
       const entries = loggerElement.children.length;
-      const rowHeight = 16; // Line height
+      const rowHeight = 12; // Line height
       const marginHeight = 8; // Total margin per row (4px top + 4px bottom)
       const totalHeight = entries * (rowHeight + marginHeight);
 
-      // Set new height with minimum of 48px
-      const newHeight = Math.max(totalHeight, 48);
+      // Set new height with minimum of 24px
+      const newHeight = Math.max(totalHeight, 24);
       loggerElement.style.height = `${newHeight}px`;
     }
   },
