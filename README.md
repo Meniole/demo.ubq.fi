@@ -1,4 +1,4 @@
-# `@ubiquity/onboard.ubq.fi`
+# `@ubiquity/demo.ubq.fi`
 
 Generates the configuration for organizations, by creating a default configuration and creating a repository under the
 given Organization.

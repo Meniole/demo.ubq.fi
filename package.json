@@ -1,7 +1,7 @@
 {
-  "name": "onboard-ubq",
+  "name": "demo-ubq",
   "version": "1.0.0",
-  "description": "Ubiquity onboarding page for organizations.",
+  "description": "Ubiquity demoing page for organizations.",
   "main": "build/index.ts",
   "author": "Ubiquity DAO",
   "license": "MIT",

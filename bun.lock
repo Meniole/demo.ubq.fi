@@ -2,7 +2,7 @@
   "lockfileVersion": 1,
   "workspaces": {
     "": {
-      "name": "onboard-ubq",
+      "name": "demo-ubq",
       "dependencies": {
         "@ethersproject/providers": "^5.7.2",
         "@octokit/core": "^5.1.0",
