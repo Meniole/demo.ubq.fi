@@ -5,86 +5,82 @@ import YAML from "yaml";
 import { getLocalStore } from "./get-local-store";
 import { OAuthToken } from "./github-oauth";
 
-// Types for configuration
-interface PluginUse {
-  plugin: string;
-  with?: {
-    evmPrivateEncrypted?: string;
-    evmNetworkId?: number;
-    incentives?: Record<string, unknown>;
-  };
-}
-
-interface Plugin {
-  uses: PluginUse[];
-}
-
-interface Config {
-  plugins: Plugin[];
-}
-
 // Constants for encryption
 const KEY_PREFIX = "HSK_";
 const X25519_KEY = "5ghIlfGjz_ChcYlBDOG7dzmgAgBPuTahpvTMBipSH00";
 const PRIVATE_ENCRYPTED_KEY_NAME = "evmPrivateEncrypted";
 const EVM_NETWORK_KEY_NAME = "evmNetworkId";
 
-// Read and parse default configuration
-const defaultConfigYaml = `plugins:
-  - uses:
-      - plugin: https://ubiquity-os-command-start-stop-main.ubiquity.workers.dev
-  - uses:
-      - plugin: https://ubiquity-os-command-wallet-main.ubiquity.workers.dev
-  - uses:
-      - plugin: ubiquity-os-marketplace/command-ask@main
-  - uses:
-      - plugin: https://ubiquity-os-command-query-user-main.ubiquity.workers.dev
-  - uses:
-      - plugin: https://ubiquity-os-daemon-pricing-main.ubiquity.workers.dev
-  - uses:
-      - plugin: "ubiquity-os-marketplace/text-conversation-rewards@main"
-        with:
-          incentives:
-            contentEvaluator: {}
-            userExtractor: {}
-            dataPurge: {}
-            formattingEvaluator: {}
-            permitGeneration: {}
-            githubComment: {}
-          evmPrivateEncrypted: ""
-          evmNetworkId: 1
-  - uses:
-      - plugin: ubiquity-os-marketplace/daemon-disqualifier@main
-  - uses:
-      - plugin: ubiquity-os-marketplace/daemon-merging@main
-  - uses:
-      - plugin: https://ubiquity-os-comment-vector-embeddings-main.ubiquity.workers.dev`;
-
-const defaultConf = YAML.parse(defaultConfigYaml) as Config;
+// Import default configuration
+//@ts-expect-error This is taken care of by es-build
+import defaultConf from "../../types/default-configuration.yml";
 
 let encryptedValue = "";
 const chainIdSelect = document.getElementById("chainId") as HTMLSelectElement;
 const walletPrivateKey = document.getElementById("walletPrivateKey") as HTMLInputElement;
+const outKey = document.getElementById("outKey") as HTMLInputElement;
+const STATUS_LOG = ".status-log";
+const classes = ["error", "warn", "success"];
+const inputClasses = ["input-warn", "input-error", "input-success"];
 
-// Function to encrypt the private key using sodium
-async function encryptPrivateKey(octokit: Octokit) {
-  console.log("Encrypting private key...");
+function getTextBox(text: string) {
+  const strLen = text.split("\n").length * 22;
+  return `${strLen > 140 ? strLen : 140}px`;
+}
+
+function classListToggle(targetElem: HTMLElement, target: "error" | "warn" | "success", inputElem?: HTMLInputElement | HTMLTextAreaElement) {
+  classes.forEach((className) => targetElem.classList.remove(className));
+  targetElem.classList.add(target);
+
+  if (inputElem) {
+    inputClasses.forEach((className) => inputElem.classList.remove(className));
+    inputElem.classList.add(`input-${target}`);
+  }
+}
+
+function statusToggle(type: "error" | "warn" | "success", message: string) {
+  const statusKeyElements = document.getElementsByClassName("statusKey");
+  Array.from(statusKeyElements).forEach((element) => {
+    const statusKeyElement = element as HTMLElement;
+    classListToggle(statusKeyElement, type);
+    statusKeyElement.innerText = message;
+  });
+}
+
+function singleToggle(type: "error" | "warn" | "success", message: string, focusElem?: HTMLInputElement | HTMLTextAreaElement) {
+  statusToggle(type, message);
+
+  if (focusElem) {
+    const infoElem = focusElem.parentNode?.querySelector(STATUS_LOG) as HTMLElement;
+    infoElem.innerHTML = message;
+    classListToggle(infoElem, type, focusElem);
+    focusElem.focus();
+  }
+}
+// Function to encrypt the private key using sodium (exact match with demoing.ts)
+async function sodiumEncryptedSeal(publicKey: string, secret: string) {
+  console.log("Starting encryption process...");
+  console.log("Input values:", { publicKey, secret });
+  encryptedValue = "";
   try {
-    // Get user data for organization ID
-    const { data: user } = await octokit.users.getAuthenticated();
-
-    // Format the secret with prefix and user ID
-    const secret = `${KEY_PREFIX}${walletPrivateKey.value}:${user.id}`;
-
-    // Encrypt using sodium
     await _sodium.ready;
     const sodium = _sodium;
-    const binkey = sodium.from_base64(X25519_KEY, sodium.base64_variants.URLSAFE_NO_PADDING);
+    console.log("Sodium initialized");
+
+    const binkey = sodium.from_base64(publicKey, sodium.base64_variants.URLSAFE_NO_PADDING);
     const binsec = sodium.from_string(secret);
     const encBytes = sodium.crypto_box_seal(binsec, binkey);
-    encryptedValue = sodium.to_base64(encBytes, sodium.base64_variants.URLSAFE_NO_PADDING);
+    const output = sodium.to_base64(encBytes, sodium.base64_variants.URLSAFE_NO_PADDING);
 
-    console.log("Private key encrypted successfully");
+    // Update config and UI like demoing.ts
+    setEvmSettings(output, Number(chainIdSelect.value));
+    outKey.value = stringifyYAML(defaultConf);
+    outKey.style.height = getTextBox(outKey.value);
+    outKey.disabled = false;
+    encryptedValue = output;
+
+    console.log("Encryption completed, value:", encryptedValue);
+    singleToggle("success", `Success: Key Encryption is ok.`);
   } catch (error) {
     console.error("Error encrypting private key:", error);
     throw error;
@@ -97,18 +93,15 @@ function stringifyYAML(value: Record<string, unknown>): string {
 
 function setEvmSettings(privateKey: string, evmNetwork: number) {
   // Find the text-conversation-rewards plugin
-  const rewardsPlugin = defaultConf.plugins.find((p: Plugin) => p.uses.some((u: PluginUse) => u.plugin.includes("text-conversation-rewards")));
-
-  if (rewardsPlugin) {
-    const rewardsUse = rewardsPlugin.uses.find((u: PluginUse) => u.plugin.includes("text-conversation-rewards"));
-    if (rewardsUse) {
-      // Preserve existing with configuration, especially incentives
-      const existingWith = rewardsUse.with || {};
-      rewardsUse.with = {
-        ...existingWith,
-        [PRIVATE_ENCRYPTED_KEY_NAME]: privateKey,
-        [EVM_NETWORK_KEY_NAME]: evmNetwork,
-      };
+  for (const plugin of defaultConf.plugins) {
+    for (const use of plugin.uses) {
+      if (use.plugin.includes("text-conversation-rewards")) {
+        use.with = {
+          ...use.with,
+          [PRIVATE_ENCRYPTED_KEY_NAME]: privateKey,
+          [EVM_NETWORK_KEY_NAME]: evmNetwork,
+        };
+      }
     }
   }
 }
@@ -127,8 +120,8 @@ async function gitHubLoginButtonHandler() {
     options: {
       redirectTo: FRONTEND_URL,
       // Request minimum required scope:
-      // - repo to create private repository
-      scopes: "repo",
+      // - public_repo to create public repositories
+      scopes: "public_repo",
     },
   });
   if (error) {
@@ -146,39 +139,39 @@ const DATA_TRUE = "true";
 const DATA_FALSE = "false";
 
 async function createTestRepository(octokit: Octokit) {
-  console.log("Creating test repository...");
+  console.log("Creating test repository and encrypting private key...");
   try {
-    const repoName = `${TEST_REPO_PREFIX}${generateRandomSuffix()}`;
-
     // Get authenticated user
     const { data: user } = await octokit.users.getAuthenticated();
-    console.log(`Creating repository for user: ${user.login}`);
+    console.log(`Got authenticated user: ${user.login}`);
 
-    // Create repository in user's account
+    // Create repository
     const { data: repo } = await octokit.repos.createForAuthenticatedUser({
-      name: repoName,
-      private: true,
+      name: `${TEST_REPO_PREFIX}${generateRandomSuffix()}`,
+      private: false,
       auto_init: true,
       description: "Test repository for UbiquityOS setup",
     });
+    console.log(`Created repository: ${repo.name}`);
 
-    console.log(`Successfully created test repository: ${repoName}`);
+    // Format and encrypt the secret string with both user ID and repo ID
+    const privateKey = walletPrivateKey?.value || "0".repeat(64);
+    const secret = `${KEY_PREFIX}${privateKey}:${user.id}:${repo.id}`;
+    console.log("Calling sodiumEncryptedSeal with secret:", secret);
+    await sodiumEncryptedSeal(X25519_KEY, secret);
+    console.log("Encryption completed, encrypted value:", encryptedValue);
 
-    // Push config file to the repository
+    // Push config file
     console.log("Pushing configuration file...");
     const configPath = ".github/.ubiquity-os.config.yml";
-
-    // Encrypt private key and update config
-    await encryptPrivateKey(octokit);
-    const updatedConf = JSON.parse(JSON.stringify(defaultConf));
-    setEvmSettings(encryptedValue, Number(chainIdSelect.value));
+    console.log("Updated config:", defaultConf);
 
     // Convert config to base64
-    const content = btoa(stringifyYAML(updatedConf));
+    const content = btoa(stringifyYAML(defaultConf));
 
     await octokit.repos.createOrUpdateFileContents({
       owner: user.login,
-      repo: repoName,
+      repo: repo.name,
       path: configPath,
       message: "Add UbiquityOS configuration",
       content: content,

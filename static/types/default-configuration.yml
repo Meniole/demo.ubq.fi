@@ -19,6 +19,8 @@ plugins:
             formattingEvaluator: {}
             permitGeneration: {}
             githubComment: {}
+          evmPrivateEncrypted: ""
+          evmNetworkId: 1
   - uses:
       - plugin: ubiquity-os-marketplace/daemon-disqualifier@main
   - uses:
