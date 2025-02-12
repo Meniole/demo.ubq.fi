@@ -206,7 +206,6 @@ export async function renderGitHubLoginButton() {
     mainView.setAttribute(DATA_AUTHENTICATED, DATA_FALSE);
   }
 
-  const setButton = document.getElementById("confirmButton") as HTMLButtonElement;
   gitHubLoginButtonWrapper.appendChild(gitHubLoginButton);
   gitHubLoginButton.id = "github-login-button";
   gitHubLoginButton.innerHTML = "<span>Login</span><span class='full'>&nbsp;With GitHub</span>";
@@ -214,7 +213,6 @@ export async function renderGitHubLoginButton() {
   if (controlsView) {
     controlsView.insertBefore(gitHubLoginButtonWrapper, controlsView.firstChild);
   }
-  setButton.disabled = false;
 }
 
 function getNewSessionToken() {

@@ -987,15 +987,17 @@
   button {
     padding: 8px 16px;
     /* backdrop-filter: blur(12px); */
+    font-size: 16px;
+    padding: 16px;
   }
   a {
     text-decoration: none;
   }
-  main[data-authenticated="false"] > div {
+  main[data-authenticated="false"] #install {
     pointer-events: none;
     opacity: 0.25;
   }
-  main[data-authenticated="false"] > div:first-child {
+  main[data-authenticated="true"] #install {
     pointer-events: initial;
     opacity: initial;
     /* text-align: center; */
@@ -1052,5 +1054,17 @@
   main > div {
     display: inline-block;
     padding: 24px 16px;
+  }
+  .controls > div {
+    /* display: block; */
+    /* width: 100%; */
+    margin: 8px auto;
+    text-align: center;
+  }
+  .controls > div * {
+    /* display: block; */
+    width: 100%;
+    /* margin: 8px auto; */
+    /* text-align: center; */
   }
 }
