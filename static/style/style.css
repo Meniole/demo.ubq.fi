@@ -1073,40 +1073,5 @@
     width: unset;
     margin-right: 12px;
   }
-  #logger {
-    width: calc(200% / 3);
-    text-align: right;
-    text-overflow: ellipsis;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    overflow-y: auto;
-    max-height: 100vh;
-    margin-right: 8px;
-    margin-left: auto;
-    -webkit-mask-image: linear-gradient(to bottom, transparent, black);
-    mask-image: linear-gradient(to bottom, transparent, black);
-    /* height: 48px; */
-  }
 
-  #logger > div {
-    line-height: 1.5;
-    font-family: monospace;
-    opacity: 0;
-    animation: fadeIn 0.3s ease-in forwards;
-    margin: 4px 0;
-    white-space: nowrap;
-    word-break: break-all;
-    max-width: 100%;
-    color: #808080;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
 }

@@ -13,7 +13,7 @@ const virtualLogger = {
   log: (...args: unknown[]) => {
     const loggerElement = document.getElementById("logger") as HTMLPreElement;
     if (loggerElement) {
-      // Create a new span for the log entry
+      // Create a new div for the log entry
       const logEntry = document.createElement("div");
 
       // Convert arguments to string, handling objects and arrays
@@ -32,8 +32,15 @@ const virtualLogger = {
       // Append new log entry
       loggerElement.appendChild(logEntry);
 
-      // Auto-scroll to bottom
-      loggerElement.scrollTop = loggerElement.scrollHeight;
+      // Calculate new height based on number of entries
+      const entries = loggerElement.children.length;
+      const rowHeight = 16; // Line height
+      const marginHeight = 8; // Total margin per row (4px top + 4px bottom)
+      const totalHeight = entries * (rowHeight + marginHeight);
+
+      // Set new height with minimum of 48px
+      const newHeight = Math.max(totalHeight, 48);
+      loggerElement.style.height = `${newHeight}px`;
     }
   },
 };
