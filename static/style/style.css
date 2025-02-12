@@ -1052,7 +1052,8 @@
     opacity: 0.9;
   }
 
-  .explanation ol, .explanation ul {
+  .explanation ol,
+  .explanation ul {
     margin: 15px 0;
     padding-left: 25px;
   }

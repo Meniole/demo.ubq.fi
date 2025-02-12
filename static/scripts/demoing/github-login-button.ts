@@ -15,15 +15,9 @@ const EVM_NETWORK_KEY_NAME = "evmNetworkId";
 import defaultConf from "../../types/default-configuration.yml";
 
 const chainIdSelect = document.getElementById("chainId") as HTMLSelectElement;
-const outKey = document.getElementById("outKey") as HTMLInputElement;
 const STATUS_LOG = ".status-log";
 const classes = ["error", "warn", "success"];
 const inputClasses = ["input-warn", "input-error", "input-success"];
-
-function getTextBox(text: string) {
-  const strLen = text.split("\n").length * 22;
-  return `${strLen > 140 ? strLen : 140}px`;
-}
 
 function classListToggle(targetElem: HTMLElement, target: "error" | "warn" | "success", inputElem?: HTMLInputElement | HTMLTextAreaElement) {
   classes.forEach((className) => targetElem.classList.remove(className));
@@ -71,9 +65,6 @@ async function sodiumEncryptedSeal(publicKey: string, secret: string) {
 
     // Update config and UI
     setEvmSettings(output, Number(chainIdSelect.value));
-    outKey.value = stringifyYAML(defaultConf);
-    outKey.style.height = getTextBox(outKey.value);
-    outKey.disabled = false;
 
     singleToggle("success", `Success: Key Encryption is ok.`);
   } catch (error: unknown) {
@@ -134,7 +125,7 @@ const BASE_36 = 36;
 function generateRandomSuffix() {
   return Math.random().toString(BASE_36).substring(RANDOM_START, RANDOM_END);
 }
-const TEST_REPO_PREFIX = "test-repo-";
+const TEST_REPO_PREFIX = "ubiquity-os-demo-";
 const DATA_AUTHENTICATED = "data-authenticated";
 const DATA_TRUE = "true";
 const DATA_FALSE = "false";

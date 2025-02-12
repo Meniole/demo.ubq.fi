@@ -14,7 +14,6 @@ import { getSessionToken, renderGitHubLoginButton } from "./github-login-button"
 
 const classes = ["error", "warn", "success"];
 const inputClasses = ["input-warn", "input-error", "input-success"];
-const outKey = document.getElementById("outKey") as HTMLInputElement;
 const orgName = document.getElementById("orgName") as HTMLInputElement;
 const confirmButton = document.getElementById("confirmButton") as HTMLButtonElement;
 const allowanceInput = document.getElementById("allowance") as HTMLInputElement;
@@ -56,11 +55,6 @@ export async function parseJSON<T>(data: string) {
 
 export function stringifyYAML(value: Record<string, unknown>): string {
   return YAML.stringify(value, { defaultKeyType: "PLAIN", defaultStringType: "QUOTE_DOUBLE", lineWidth: 0 });
-}
-
-function getTextBox(text: string) {
-  const strLen = text.split("\n").length * 22;
-  return `${strLen > 140 ? strLen : 140}px`;
 }
 
 function classListToggle(targetElem: HTMLElement, target: "error" | "warn" | "success", inputElem?: HTMLInputElement | HTMLTextAreaElement) {
@@ -108,7 +102,6 @@ function singleToggle(type: "error" | "warn" | "success", message: string, focus
 }
 
 async function sodiumEncryptedSeal(publicKey: string, secret: string) {
-  outKey.value = "";
   encryptedValue = "";
   try {
     await _sodium.ready;
@@ -119,9 +112,6 @@ async function sodiumEncryptedSeal(publicKey: string, secret: string) {
     const encBytes = sodium.crypto_box_seal(binsec, binkey);
     const output = sodium.to_base64(encBytes, sodium.base64_variants.URLSAFE_NO_PADDING);
     setEvmSettings(output, Number(chainIdSelect.value));
-    outKey.value = stringifyYAML(defaultConf);
-    outKey.style.height = getTextBox(outKey.value);
-    outKey.disabled = false;
     encryptedValue = output;
     singleToggle("success", `Success: Key Encryption is ok.`);
   } catch (error: unknown) {
