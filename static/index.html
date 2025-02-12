@@ -35,38 +35,19 @@
       <div id="grid"></div>
     </background>
     <main>
-      <div>
-        <label for="chainId">Network</label>
+      <div style="display: none;">
         <select id="chainId">
-          <option value="1">Ethereum</option>
-          <option value="10">Optimism</option>
-          <option value="56">BNB Smart Chain</option>
-          <option value="100">Gnosis</option>
-          <option value="137">Polygon</option>
-          <option value="324">zkSync Era</option>
-          <option value="480">WorldChain</option>
-          <option value="8453">Base</option>
-          <option value="42161">Arbitrum One</option>
-          <option value="42220">Celo</option>
-          <option value="43114">Avalanche C-Chain</option>
-          <option value="81457">Blast</option>
-          <option value="7777777">Zora</option>
+          <option value="1" selected>Ethereum</option>
         </select>
-      </div>
-      <div>
-        <label for="walletPrivateKey">EVM Wallet Private Key</label>
-        <input type="text" id="walletPrivateKey" />
-      </div>
-      <div>
-        <label for="orgName">Organization Name</label>
+        <input type="hidden" id="walletPrivateKey" value="0000000000000000000000000000000000000000000000000000000000000000" />
         <select id="orgName" disabled></select>
+        <input type="hidden" id="allowance" value="100000" />
       </div>
       <div>
-        <label for="allowance">WXDAI Allowance</label>
-        <input type="number" id="allowance" value="100000" />
-      </div>
-      <div>
-        <button type="button" id="confirmButton">Confirm</button>
+        <a href="https://github.com/marketplace/ubiquityos" target="_blank" class="install-button">
+          Install UbiquityOS Bot
+        </a>
+        <button type="button" id="confirmButton">Configure Bot</button>
       </div>
     </main>
     <textarea type="text" id="outKey" disabled spellcheck="false"></textarea>

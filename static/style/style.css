@@ -987,6 +987,27 @@
     padding: 8px 16px;
     /* backdrop-filter: blur(12px); */
   }
+
+  .install-button {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #80808020;
+    border: 1px solid #80808080;
+    border-radius: 4px;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+  }
+
+  .install-button:hover {
+    background-color: #80808040;
+  }
+
+  .install-button:active {
+    background-color: #80808060;
+  }
   main[data-authenticated="false"] > div {
     pointer-events: none;
     opacity: 0.25;

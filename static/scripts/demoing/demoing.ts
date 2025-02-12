@@ -350,24 +350,7 @@ async function switchNetwork(provider: ethers.providers.Web3Provider, chainId: s
   }
 }
 
-function isHex(str: string): boolean {
-  const regexp = /^[0-9a-fA-F]+$/;
-  return regexp.test(str);
-}
-
 async function step1Handler() {
-  if (walletPrivateKey.value === "") {
-    singleToggle("warn", `Warn: Private_Key is not set.`, walletPrivateKey);
-    return;
-  }
-  if (!isHex(walletPrivateKey.value)) {
-    singleToggle("warn", `Warn: Private_Key is not a valid hex string.`, walletPrivateKey);
-    return;
-  }
-  if (walletPrivateKey.value.length !== 64) {
-    singleToggle("warn", `Warn: Private_Key must be 32 bytes long.`, walletPrivateKey);
-    return;
-  }
   if (orgName.value === "") {
     singleToggle("warn", `Warn: Org Name is not set.`, orgName);
     return;
