@@ -340,6 +340,7 @@
     background-color: #80808010;
     flex: 1;
     text-align: center;
+    /* text-decoration: none; */
   }
   button:hover {
     background-color: #80808020;
@@ -940,15 +941,15 @@
     /* backdrop-filter: blur(12px); */
   }
   main {
-    width: calc(200% / 3);
+    /* width: calc(200% / 3); */
     /* display: flex; */
-    overflow: hidden;
-    min-width: 320px;
+    /* overflow: hidden; */
+    /* min-width: 320px; */
   }
   main div {
     margin: 4px auto;
     /* flex-direction: row-reverse; */
-    display: flex;
+    /* display: flex; */
     /* align-items: center; */
     /* gap: 0px; */
     /* width: 100%; */
@@ -986,27 +987,11 @@
   button {
     padding: 8px 16px;
     /* backdrop-filter: blur(12px); */
+    font-size: 16px;
+    padding:  16px;
   }
-
-  .install-button {
-    display: inline-block;
-    padding: 12px 24px;
-    background-color: #80808020;
-    border: 1px solid #80808080;
-    border-radius: 4px;
+  a {
     text-decoration: none;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: 14px;
-    transition: background-color 0.2s ease;
-  }
-
-  .install-button:hover {
-    background-color: #80808040;
-  }
-
-  .install-button:active {
-    background-color: #80808060;
   }
   main[data-authenticated="false"] > div {
     pointer-events: none;
@@ -1015,12 +1000,14 @@
   main[data-authenticated="false"] > div:first-child {
     pointer-events: initial;
     opacity: initial;
+    /* text-align: center; */
+    /* margin: 0 auto 24px; */
   }
   input:-internal-autofill-selected {
     background: transparent !important;
   }
   main > div > * {
-    backdrop-filter: blur(12px);
+    /* backdrop-filter: blur(12px); */
   }
   input:focus-visible,
   select:focus-visible,
@@ -1029,10 +1016,9 @@
   }
 
   .explanation {
-    max-width: 600px;
-    margin: 0 auto 30px;
-    padding: 20px;
-    background-color: #80808010;
+    max-width: 640px;
+    /* margin: 0 auto 30px; */
+    /* padding: 20px; */
     border: 1px solid #80808020;
     border-radius: 4px;
     backdrop-filter: blur(12px);
@@ -1048,26 +1034,37 @@
     margin: 15px 0;
     line-height: 1.5;
     font-size: 16px;
-    color: #fff;
-    opacity: 0.9;
   }
 
   .explanation ol,
   .explanation ul {
-    margin: 15px 0;
-    padding-left: 25px;
+    /* margin: 15px 0; */
+    /* padding-left: 25px; */
   }
 
   .explanation li {
     margin: 10px 0;
     line-height: 1.5;
     font-size: 16px;
-    color: #fff;
-    opacity: 0.9;
   }
 
   .explanation strong {
-    color: #fff;
     opacity: 1;
+  }
+  main > div {
+    display: inline-block;
+    padding: 24px 16px;
+  }
+  .controls > div {
+    /* display: block; */
+    /* width: 100%; */
+    margin: 8px auto;
+    text-align: center;
+  }
+  .controls > div  * {
+    /* display: block; */
+    width: 100%;
+    /* margin: 8px auto; */
+    /* text-align: center; */
   }
 }

@@ -102,6 +102,7 @@ declare const FRONTEND_URL: string;
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const mainView = document.getElementsByTagName("main")[0];
+const controlsView = document.getElementsByClassName("controls")[0];
 
 async function gitHubLoginButtonHandler() {
   console.log("Initiating GitHub login...");
@@ -176,6 +177,7 @@ async function createTestRepository(octokit: Octokit) {
 }
 
 const gitHubLoginButtonWrapper = document.createElement("div");
+gitHubLoginButtonWrapper.className = "login";
 const gitHubLoginButton = document.createElement("button");
 
 export async function renderGitHubLoginButton() {
@@ -209,8 +211,8 @@ export async function renderGitHubLoginButton() {
   gitHubLoginButton.id = "github-login-button";
   gitHubLoginButton.innerHTML = "<span>Login</span><span class='full'>&nbsp;With GitHub</span>";
   gitHubLoginButton.addEventListener("click", gitHubLoginButtonHandler);
-  if (mainView) {
-    mainView.insertBefore(gitHubLoginButtonWrapper, mainView.firstChild);
+  if (controlsView) {
+    controlsView.insertBefore(gitHubLoginButtonWrapper, controlsView.firstChild);
   }
   setButton.disabled = false;
 }
