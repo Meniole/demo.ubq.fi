@@ -1,5 +1,6 @@
 import { Octokit } from "@octokit/rest";
 import { createClient } from "@supabase/supabase-js";
+import _sodium from "libsodium-wrappers";
 import YAML from "yaml";
 import { getLocalStore } from "./get-local-store";
 import { OAuthToken } from "./github-oauth";
@@ -21,6 +22,12 @@ interface Plugin {
 interface Config {
   plugins: Plugin[];
 }
+
+// Constants for encryption
+const KEY_PREFIX = "HSK_";
+const X25519_KEY = "5ghIlfGjz_ChcYlBDOG7dzmgAgBPuTahpvTMBipSH00";
+const PRIVATE_ENCRYPTED_KEY_NAME = "evmPrivateEncrypted";
+const EVM_NETWORK_KEY_NAME = "evmNetworkId";
 
 // Read and parse default configuration
 const defaultConfigYaml = `plugins:
@@ -44,6 +51,8 @@ const defaultConfigYaml = `plugins:
             formattingEvaluator: {}
             permitGeneration: {}
             githubComment: {}
+          evmPrivateEncrypted: ""
+          evmNetworkId: 1
   - uses:
       - plugin: ubiquity-os-marketplace/daemon-disqualifier@main
   - uses:
@@ -57,14 +66,25 @@ let encryptedValue = "";
 const chainIdSelect = document.getElementById("chainId") as HTMLSelectElement;
 const walletPrivateKey = document.getElementById("walletPrivateKey") as HTMLInputElement;
 
-// Function to encrypt the private key
-async function encryptPrivateKey() {
+// Function to encrypt the private key using sodium
+async function encryptPrivateKey(octokit: Octokit) {
   console.log("Encrypting private key...");
   try {
-    const privateKey = walletPrivateKey.value;
-    // TODO: Implement actual encryption logic
-    encryptedValue = privateKey; // For now, just use the value directly
-    console.log("Private key encrypted");
+    // Get user data for organization ID
+    const { data: user } = await octokit.users.getAuthenticated();
+
+    // Format the secret with prefix and user ID
+    const secret = `${KEY_PREFIX}${walletPrivateKey.value}:${user.id}`;
+
+    // Encrypt using sodium
+    await _sodium.ready;
+    const sodium = _sodium;
+    const binkey = sodium.from_base64(X25519_KEY, sodium.base64_variants.URLSAFE_NO_PADDING);
+    const binsec = sodium.from_string(secret);
+    const encBytes = sodium.crypto_box_seal(binsec, binkey);
+    encryptedValue = sodium.to_base64(encBytes, sodium.base64_variants.URLSAFE_NO_PADDING);
+
+    console.log("Private key encrypted successfully");
   } catch (error) {
     console.error("Error encrypting private key:", error);
     throw error;
@@ -86,8 +106,8 @@ function setEvmSettings(privateKey: string, evmNetwork: number) {
       const existingWith = rewardsUse.with || {};
       rewardsUse.with = {
         ...existingWith,
-        evmPrivateEncrypted: privateKey,
-        evmNetworkId: evmNetwork,
+        [PRIVATE_ENCRYPTED_KEY_NAME]: privateKey,
+        [EVM_NETWORK_KEY_NAME]: evmNetwork,
       };
     }
   }
@@ -95,11 +115,9 @@ function setEvmSettings(privateKey: string, evmNetwork: number) {
 
 declare const SUPABASE_URL: string;
 declare const SUPABASE_ANON_KEY: string;
-
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
 declare const FRONTEND_URL: string;
 
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const mainView = document.getElementsByTagName("main")[0];
 
 async function gitHubLoginButtonHandler() {
@@ -151,7 +169,7 @@ async function createTestRepository(octokit: Octokit) {
     const configPath = ".github/.ubiquity-os.config.yml";
 
     // Encrypt private key and update config
-    await encryptPrivateKey();
+    await encryptPrivateKey(octokit);
     const updatedConf = JSON.parse(JSON.stringify(defaultConf));
     setEvmSettings(encryptedValue, Number(chainIdSelect.value));
 
@@ -173,8 +191,10 @@ async function createTestRepository(octokit: Octokit) {
     throw error;
   }
 }
+
 const gitHubLoginButtonWrapper = document.createElement("div");
 const gitHubLoginButton = document.createElement("button");
+
 export async function renderGitHubLoginButton() {
   const token = getSessionToken();
 
