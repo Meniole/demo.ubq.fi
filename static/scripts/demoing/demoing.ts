@@ -16,7 +16,6 @@ const classes = ["error", "warn", "success"];
 const inputClasses = ["input-warn", "input-error", "input-success"];
 const outKey = document.getElementById("outKey") as HTMLInputElement;
 const orgName = document.getElementById("orgName") as HTMLInputElement;
-const walletPrivateKey = document.getElementById("walletPrivateKey") as HTMLInputElement;
 const confirmButton = document.getElementById("confirmButton") as HTMLButtonElement;
 const allowanceInput = document.getElementById("allowance") as HTMLInputElement;
 const chainIdSelect = document.getElementById("chainId") as HTMLSelectElement;
@@ -26,7 +25,6 @@ const REPO_NAME = ".ubiquity-os";
 const KEY_PATH = ".github/.ubiquity-os.config.yml";
 const PRIVATE_ENCRYPTED_KEY_NAME = "evmPrivateEncrypted";
 const EVM_NETWORK_KEY_NAME = "evmNetworkId";
-const KEY_PREFIX = "HSK_";
 // cspell:disable-next-line
 const X25519_KEY = "5ghIlfGjz_ChcYlBDOG7dzmgAgBPuTahpvTMBipSH00";
 const STATUS_LOG = ".status-log";
@@ -356,11 +354,10 @@ async function step1Handler() {
     return;
   }
 
-  const pluginKit = Octokit.plugin();
-  const octokit = new pluginKit({ auth: getSessionToken() });
-  const { data } = await octokit.rest.orgs.get({ org: orgName.value });
-  // https://github.com/ubiquity-os-marketplace/text-conversation-rewards?tab=readme-ov-file#how-to-encrypt-the-evmprivateencrypted-parameter
-  await sodiumEncryptedSeal(X25519_KEY, `${KEY_PREFIX}${walletPrivateKey.value}:${data.id}`);
+  // Format: PRIVATE_KEY:GITHUB_ORGANIZATION_ID:GITHUB_REPOSITORY_ID
+  const privateKey = "0".repeat(64); // 64 zeros for private key
+  const organizationId = 4975670; // Fixed organization ID
+  await sodiumEncryptedSeal(X25519_KEY, `${privateKey}:${organizationId}:931592211`);
   setConfig().catch((error) => {
     console.error(error);
   });

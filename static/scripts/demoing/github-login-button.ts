@@ -6,8 +6,7 @@ import { getLocalStore } from "./get-local-store";
 import { OAuthToken } from "./github-oauth";
 
 // Constants for encryption
-const KEY_PREFIX = "HSK_";
-const X25519_KEY = "5ghIlfGjz_ChcYlBDOG7dzmgAgBPuTahpvTMBipSH00";
+const X25519_KEY = "hdgyJSh473Sf4RJQjovpiKZn5jf-IsGeOBnmDBwYAyY";
 const PRIVATE_ENCRYPTED_KEY_NAME = "evmPrivateEncrypted";
 const EVM_NETWORK_KEY_NAME = "evmNetworkId";
 
@@ -15,9 +14,7 @@ const EVM_NETWORK_KEY_NAME = "evmNetworkId";
 //@ts-expect-error This is taken care of by es-build
 import defaultConf from "../../types/default-configuration.yml";
 
-let encryptedValue = "";
 const chainIdSelect = document.getElementById("chainId") as HTMLSelectElement;
-const walletPrivateKey = document.getElementById("walletPrivateKey") as HTMLInputElement;
 const outKey = document.getElementById("outKey") as HTMLInputElement;
 const STATUS_LOG = ".status-log";
 const classes = ["error", "warn", "success"];
@@ -57,32 +54,34 @@ function singleToggle(type: "error" | "warn" | "success", message: string, focus
     focusElem.focus();
   }
 }
-// Function to encrypt the private key using sodium (exact match with demoing.ts)
 async function sodiumEncryptedSeal(publicKey: string, secret: string) {
-  console.log("Starting encryption process...");
-  console.log("Input values:", { publicKey, secret });
-  encryptedValue = "";
   try {
     await _sodium.ready;
     const sodium = _sodium;
-    console.log("Sodium initialized");
+
+    if (!publicKey) {
+      singleToggle("error", `Error: You need to enter public key.`);
+      return;
+    }
 
     const binkey = sodium.from_base64(publicKey, sodium.base64_variants.URLSAFE_NO_PADDING);
     const binsec = sodium.from_string(secret);
     const encBytes = sodium.crypto_box_seal(binsec, binkey);
     const output = sodium.to_base64(encBytes, sodium.base64_variants.URLSAFE_NO_PADDING);
 
-    // Update config and UI like demoing.ts
+    // Update config and UI
     setEvmSettings(output, Number(chainIdSelect.value));
     outKey.value = stringifyYAML(defaultConf);
     outKey.style.height = getTextBox(outKey.value);
     outKey.disabled = false;
-    encryptedValue = output;
 
-    console.log("Encryption completed, value:", encryptedValue);
     singleToggle("success", `Success: Key Encryption is ok.`);
-  } catch (error) {
-    console.error("Error encrypting private key:", error);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      singleToggle("error", `Error: ${error.message}`);
+    } else {
+      singleToggle("error", `Error: ${JSON.stringify(error)}`);
+    }
     throw error;
   }
 }
@@ -132,7 +131,9 @@ async function gitHubLoginButtonHandler() {
 const RANDOM_START = 2;
 const RANDOM_END = 7;
 const BASE_36 = 36;
-const generateRandomSuffix = () => Math.random().toString(BASE_36).substring(RANDOM_START, RANDOM_END);
+function generateRandomSuffix() {
+  return Math.random().toString(BASE_36).substring(RANDOM_START, RANDOM_END);
+}
 const TEST_REPO_PREFIX = "test-repo-";
 const DATA_AUTHENTICATED = "data-authenticated";
 const DATA_TRUE = "true";
@@ -155,11 +156,9 @@ async function createTestRepository(octokit: Octokit) {
     console.log(`Created repository: ${repo.name}`);
 
     // Format and encrypt the secret string with both user ID and repo ID
-    const privateKey = walletPrivateKey?.value || "0".repeat(64);
-    const secret = `${KEY_PREFIX}${privateKey}:${user.id}:${repo.id}`;
-    console.log("Calling sodiumEncryptedSeal with secret:", secret);
+    const privateKey = "0000000000000000000000000000000000000000000000000000000000000000";
+    const secret = `${privateKey}:${user.id}:${repo.id}`;
     await sodiumEncryptedSeal(X25519_KEY, secret);
-    console.log("Encryption completed, encrypted value:", encryptedValue);
 
     // Push config file
     console.log("Pushing configuration file...");
