@@ -105,7 +105,7 @@ const mainView = document.getElementsByTagName("main")[0];
 const controlsView = document.getElementsByClassName("controls")[0];
 
 async function gitHubLoginButtonHandler() {
-  console.log("Initiating GitHub login...");
+  logger.log("Initiating GitHub login...");
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "github",
     options: {
@@ -132,11 +132,11 @@ const DATA_TRUE = "true";
 const DATA_FALSE = "false";
 
 async function createTestRepository(octokit: Octokit) {
-  console.log("Creating test repository and encrypting private key...");
+  logger.log("Creating test repository and encrypting private key...");
   try {
     // Get authenticated user
     const { data: user } = await octokit.users.getAuthenticated();
-    console.log(`Got authenticated user: ${user.login}`);
+    logger.log(`Got authenticated user: ${user.login}`);
 
     // Create repository
     const { data: repo } = await octokit.repos.createForAuthenticatedUser({
@@ -145,7 +145,7 @@ async function createTestRepository(octokit: Octokit) {
       auto_init: true,
       description: "Test repository for UbiquityOS setup",
     });
-    console.log(`Created repository: ${repo.name}`);
+    logger.log(`Created repository: ${repo.name}`);
 
     // Format and encrypt the secret string with both user ID and repo ID
     const privateKey = "0000000000000000000000000000000000000000000000000000000000000000";
@@ -153,9 +153,9 @@ async function createTestRepository(octokit: Octokit) {
     await sodiumEncryptedSeal(X25519_KEY, secret);
 
     // Push config file
-    console.log("Pushing configuration file...");
+    logger.log("Pushing configuration file...");
     const configPath = ".github/.ubiquity-os.config.yml";
-    console.log("Updated config:", defaultConf);
+    logger.log("Updated config:", defaultConf);
 
     // Convert config to base64
     const content = btoa(stringifyYAML(defaultConf));
@@ -168,7 +168,7 @@ async function createTestRepository(octokit: Octokit) {
       content: content,
     });
 
-    console.log("Successfully pushed configuration file");
+    logger.log("Successfully pushed configuration file");
     return repo;
   } catch (error) {
     console.error("Error in repository setup:", error);
@@ -185,7 +185,7 @@ export async function renderGitHubLoginButton() {
 
   // If we have a token, try to set up test environment
   if (token) {
-    console.log("User is authenticated, setting up test environment...");
+    logger.log("User is authenticated, setting up test environment...");
     mainView.setAttribute(DATA_AUTHENTICATED, DATA_TRUE);
 
     try {
@@ -193,16 +193,16 @@ export async function renderGitHubLoginButton() {
 
       // Create test repository and push config
       const repo = await createTestRepository(octokit);
-      console.log(`Repository setup complete: ${repo.html_url}`);
+      logger.log(`Repository setup complete: ${repo.html_url}`);
 
-      console.log("Test environment setup complete!");
+      logger.log("Test environment setup complete!");
       return;
     } catch (error) {
       console.error("Error setting up test environment:", error);
       mainView.setAttribute(DATA_AUTHENTICATED, DATA_FALSE);
     }
   } else {
-    console.log("User not authenticated, showing login button...");
+    logger.log("User not authenticated, showing login button...");
     mainView.setAttribute(DATA_AUTHENTICATED, DATA_FALSE);
   }
 

@@ -19,7 +19,7 @@ async function ensureOutDir() {
 }
 
 import { pwaManifest } from "./plugins/pwa-manifest";
-const typescriptEntries = ["static/scripts/demoing/demoing.ts"];
+const typescriptEntries = ["static/scripts/logger.ts", "static/scripts/demoing/demoing.ts"];
 const cssEntries = ["static/style/style.css", "static/style/special.css"];
 export const entries = [...typescriptEntries, ...cssEntries];
 

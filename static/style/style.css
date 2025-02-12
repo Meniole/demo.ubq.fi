@@ -913,6 +913,7 @@
   background {
     pointer-events: none;
     z-index: -1;
+    display: flex;
   }
   select {
     background-color: transparent;
@@ -1066,5 +1067,21 @@
     width: 100%;
     /* margin: 8px auto; */
     /* text-align: center; */
+  }
+  #logger {
+    /* background: red; */
+    /* height: 100vh; */
+    width: calc(200% / 3);
+    margin-right: auto;
+    /* margin-left: calc(100% / 3); */
+    /* border: 1px inset #fff; */
+    margin: auto;
+    margin-right: 0;
+    font-family: monospace;
+    text-align: right;
+    line-height: 1.5;
+    margin-top: 64px;
+    margin-right: 16px;
+    color: #808080;
   }
 }

@@ -1,9 +1,7 @@
-import { createOrUpdateTextFile } from "@octokit/plugin-create-or-update-text-file";
-import { Octokit } from "@octokit/rest";
 import YAML from "yaml";
 //@ts-expect-error This is taken care of by es-build
 import defaultConf from "../../types/default-configuration.yml";
-import { getSessionToken, renderGitHubLoginButton } from "./github-login-button";
+import { renderGitHubLoginButton } from "./github-login-button";
 
 const inputClasses = ["input-warn", "input-error", "input-success"];
 
@@ -44,33 +42,11 @@ function setInputListeners() {
   });
 }
 
-async function populateOrgs() {
-  if (getSessionToken()) {
-    const pluginKit = Octokit.plugin(createOrUpdateTextFile);
-    const octokit = new pluginKit({ auth: getSessionToken() });
-    const { data } = await octokit.rest.orgs.listForAuthenticatedUser({ per_page: 100 });
-    const selectContainer = document.getElementById("orgName");
-    if (selectContainer) {
-      selectContainer.innerHTML = "";
-      if (data.length) {
-        selectContainer.removeAttribute("disabled");
-        for (const repo of data) {
-          const optionElem = document.createElement("option");
-          optionElem.value = repo.login;
-          optionElem.innerText = repo.login;
-          selectContainer.appendChild(optionElem);
-        }
-      }
-    }
-  }
-}
-
 async function init() {
   if (defaultConf !== undefined) {
     try {
       setInputListeners();
       await renderGitHubLoginButton();
-      await populateOrgs();
     } catch (error) {
       console.error(error);
     }
