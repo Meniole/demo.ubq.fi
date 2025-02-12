@@ -1027,4 +1027,46 @@
   button:focus-visible {
     outline-offset: -1px;
   }
+
+  .explanation {
+    max-width: 600px;
+    margin: 0 auto 30px;
+    padding: 20px;
+    background-color: #80808010;
+    border: 1px solid #80808020;
+    border-radius: 4px;
+    backdrop-filter: blur(12px);
+  }
+
+  .explanation h2 {
+    margin: 0 0 15px;
+    font-size: 24px;
+    text-align: center;
+  }
+
+  .explanation p {
+    margin: 15px 0;
+    line-height: 1.5;
+    font-size: 16px;
+    color: #fff;
+    opacity: 0.9;
+  }
+
+  .explanation ol, .explanation ul {
+    margin: 15px 0;
+    padding-left: 25px;
+  }
+
+  .explanation li {
+    margin: 10px 0;
+    line-height: 1.5;
+    font-size: 16px;
+    color: #fff;
+    opacity: 0.9;
+  }
+
+  .explanation strong {
+    color: #fff;
+    opacity: 1;
+  }
 }
