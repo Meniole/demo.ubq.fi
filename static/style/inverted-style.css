@@ -949,6 +949,7 @@
   button {
     font-size: 16px;
     padding: 16px 0;
+    box-shadow: 0 0 64px #ffffff80;
   }
   a {
     text-decoration: none;
@@ -976,6 +977,7 @@
     border: 1px solid #7f7f7f20;
     border-radius: 4px;
     backdrop-filter: blur(12px);
+    box-shadow: 0 0 64px #ffffff80;
   }
   .explanation h2 {
     font-size: 24px;
