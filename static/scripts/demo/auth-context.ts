@@ -12,7 +12,7 @@
 
 import { Octokit } from "@octokit/rest";
 import { createClient } from "@supabase/supabase-js";
-import { getLocalStore } from "./get-local-store";
+import { getLocalStore } from "./local-store";
 
 declare const logger: {
   log: (...args: unknown[]) => void;
