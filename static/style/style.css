@@ -1027,6 +1027,9 @@
     pointer-events: auto;
     /* display: block; */
   }
+  #first-issue {
+    transform: translateY(calc(100% + 4px));
+  }
   .controls {
     position: absolute;
     width: 100%;
