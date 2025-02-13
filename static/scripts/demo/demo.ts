@@ -1,7 +1,7 @@
 import YAML from "yaml";
 //@ts-expect-error This is taken care of by es-build
 import defaultConf from "../../types/default-configuration.yml";
-import { renderGitHubLoginButton } from "./github-login-button";
+import { getSessionToken, gitHubLoginButtonHandler, setupTestEnvironment } from "./auth-context";
 
 const inputClasses = ["input-warn", "input-error", "input-success"];
 
@@ -42,11 +42,28 @@ function setInputListeners() {
   });
 }
 
+function initializeAuth() {
+  const token = getSessionToken();
+  const loginButton = document.getElementById("github-login") as HTMLDivElement;
+  const gitHubLoginButton = document.getElementById("github-login-button") as HTMLButtonElement;
+
+  // Add click handler to the button
+  gitHubLoginButton.addEventListener("click", gitHubLoginButtonHandler);
+
+  // Show login button if not authenticated
+  if (!token) {
+    loginButton.classList.add("visible");
+  } else if (loginButton) {
+    // If we have a token, set up test environment
+    setupTestEnvironment(token, loginButton).catch(console.error);
+  }
+}
+
 async function init() {
   if (defaultConf !== undefined) {
     try {
       setInputListeners();
-      await renderGitHubLoginButton();
+      initializeAuth();
     } catch (error) {
       console.error(error);
     }
