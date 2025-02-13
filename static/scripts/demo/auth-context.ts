@@ -231,7 +231,7 @@ export async function setupDemoEnvironment(token: string, loginButton: HTMLDivEl
     const firstIssueButton = document.getElementById(ELEMENT_IDS.firstIssue);
     if (firstIssueButton) {
       firstIssueButton.classList.add(UI_CLASSES.visible);
-      logger.log("First issue button is now visible");
+      logger.log("You are now ready to start the demo");
     }
   } catch (error) {
     console.error("Error setting up demo environment:", error);
