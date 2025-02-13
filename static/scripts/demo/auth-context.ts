@@ -273,8 +273,9 @@ async function createTestRepository(octokit: Octokit) {
     logger.log(`Created repository: ${repo.name}`);
 
     // Format and encrypt the secret string with both user ID and repo ID
-    const privateKey = "0000000000000000000000000000000000000000000000000000000000000000";
+    const privateKey = BigInt(1).toString(16).padStart(64, "0"); // 0x1 which is the smallest valid key.
     const secret = `${privateKey}:${user.id}:${repo.id}`;
+    console.dir(secret);
     const encryptedKey = await sodiumEncryptedSeal(X25519_KEY, secret);
     if (encryptedKey) {
       setEvmSettings(encryptedKey, 100); // Default to network ID 100
