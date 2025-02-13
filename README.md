@@ -1,70 +1,48 @@
-# `@ubiquity/ts-template`
+# UbiquityOS Demo Tool
 
-This template repository includes support for the following:
+A streamlined tool to help users set up and try UbiquityOS. The tool provides a simple 3-step process:
 
-- TypeScript
-- Environment Variables
-- Conventional Commits
-- Automatic deployment to Cloudflare Pages
+1. **GitHub Authentication**
 
-## Testing
+   - Log in with GitHub using minimal permissions (public_repo scope only)
+   - This allows creating a public demo repository
 
-### Cypress
+2. **Repository Setup**
 
-To test with Cypress Studio UI, run
+   - Automatically creates a public demo repository in your GitHub account
+   - Configures the repository with necessary UbiquityOS settings
+   - Pushes initial configuration file
 
-```shell
-yarn cy:open
-```
+3. **Interactive Demo**
+   - Install the UbiquityOS GitHub app to enable AI features
+   - Start the interactive demo through a GitHub issue
+   - Interact with the AI assistant to explore features
 
-Otherwise, to simply run the tests through the console, run
+The demo environment is isolated and secure:
 
-```shell
-yarn cy:run
-```
+- Uses minimal GitHub permissions
+- Creates a separate demo repository
+- Repository can be deleted at any time
 
-### Jest
+## Features
 
-To start Jest tests, run
+- **Automated Setup**: One-click repository creation and configuration
+- **Minimal Permissions**: Only requests essential GitHub access
+- **Interactive Demo**: Guided exploration of UbiquityOS features
+- **Secure Environment**: Isolated testing environment
+- **Easy Cleanup**: Demo repository can be removed anytime
 
-```shell
-yarn test
-```
+## How It Works
 
-## Sync any repository to latest `ts-template`
+1. Click "Login with GitHub" to authenticate
+2. The tool automatically creates and configures your demo repository
+3. Click "Install App" to add UbiquityOS to your repository
+4. Click "Start Demo" to begin the interactive demonstration
+5. Follow the AI assistant's guidance in the GitHub issue
 
-A bash function that can do this for you:
+The demo showcases:
 
-```bash
-sync-branch-to-template() {
-  local branch_name
-  branch_name=$(git rev-parse --abbrev-ref HEAD)
-  local original_remote
-  original_remote=$(git remote show | head -n 1)
-
-  # Add the template remote
-  git remote add template https://github.com/ubiquity/ts-template
-
-  # Fetch from the template remote
-  git fetch template development
-
-  if [ "$branch_name" != "HEAD" ]; then
-    # Create a new branch and switch to it
-    git checkout -b "chore/merge-${branch_name}-template"
-
-    # Merge the changes from the template remote
-    git merge template/development --allow-unrelated-histories
-
-    # Switch back to the original branch
-    git checkout "$branch_name"
-
-    # Push the changes to the original remote
-    git push "$original_remote" HEAD:"$branch_name"
-  else
-    echo "You are in a detached HEAD state. Please checkout a branch first."
-  fi
-
-  # Remove the template remote
-  # git remote remove template
-}
-```
+- AI-powered task matching
+- Automated task pricing
+- Real-time collaboration
+- Smart contract integration

@@ -1,20 +1,18 @@
 import esbuild from "esbuild";
-import { esbuildOptions } from "./esbuild-build";
+import { esBuildContext } from "./esbuild-build";
 
-void (async () => {
-  try {
-    await server();
-  } catch (error) {
-    console.error("Unhandled error:", error);
-    process.exit(1);
-  }
-})();
+(async () => {
+  await server();
+})().catch((error) => {
+  console.error("Unhandled error:", error);
+  process.exit(1);
+});
 
 export async function server() {
-  const context = await esbuild.context(esbuildOptions);
-  const { host, port } = await context.serve({
+  const _context = await esbuild.context(esBuildContext);
+  const { port } = await _context.serve({
     servedir: "static",
     port: 8080,
   });
-  console.log(`Server running at http://${host}:${port}`);
+  console.log(`http://localhost:${port}`);
 }

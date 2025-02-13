@@ -8,6 +8,5 @@ node_modules
 .pnp.loader.mjs
 .env
 static/dist
-coverage
-junit.xml
-cypress/screenshots
+metamask
+static/out
