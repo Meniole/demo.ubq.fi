@@ -180,7 +180,6 @@
     color: #404040;
     font-size: 12px;
     letter-spacing: 0.5px;
-    /* text-rendering: geometricPrecision; */
     top: 0;
     right: 0;
   }
@@ -190,7 +189,6 @@
     color: #404040;
     font-size: 12px;
     letter-spacing: 0.5px;
-    /* text-rendering: geometricPrecision; */
     top: 0;
     right: 0;
   }
@@ -222,23 +220,10 @@
     border-radius: 4px;
     margin: 0 2px 0;
     font-size: 12px;
-    /* text-align: center; */
-    /* white-space: nowrap; */
     background-color: #7f7f7f20;
     letter-spacing: 0.5px;
-    /* flex-grow: 4; */
-    /* justify-content: center; */
-    /* display: flex; */
-    /* align-items: center; */
-    /* height: 16px; */
     text-overflow: ellipsis;
     overflow: hidden;
-    /* display: inline-block; */
-    /* vertical-align: middle; */
-    /* flex: 1; */
-    /* white-space: nowrap; */
-    /* text-align: right; */ /* Align text for readability */
-    /* backdrop-filter: blur(12px); */
   }
   input[type="radio"] {
     background-color: unset;
@@ -252,10 +237,8 @@
   }
   label {
     cursor: pointer;
-    /* flex: 0 1 auto; */
     white-space: nowrap;
-    min-width: 135px; /* Prevent labels from getting too small */
-    /* position: absolute; */
+    min-width: 135px;
     text-align: right;
   }
   .filters-container label:not([for="view-toggle"]):hover {
@@ -340,7 +323,6 @@
     background-color: #7f7f7f10;
     flex: 1;
     text-align: center;
-    /* text-decoration: none; */
     backdrop-filter: blur(12px);
   }
   button:hover {
@@ -925,38 +907,19 @@
     flex: 2;
   }
   input {
-    /* background-color: transparent; */
-    /* border-radius: 4px; */
-    /* border: 1px solid #7f7f7f80; */
-    /* padding: 8px 16px; */
-    /* flex: 2; */
-    /* display: flex; */
     background-color: transparent;
     border-radius: 4px;
     padding: 8px 16px;
     border: 1px solid #7f7f7f80;
     appearance: initial;
-    /* flex: 2; */
-    /* text-orientation: mixed; */
     vertical-align: middle;
     width: 100%;
-    /* backdrop-filter: blur(12px); */
   }
   main {
-    /* width: calc(200% / 3); */
-    /* display: flex; */
-    /* overflow: hidden; */
-    /* min-width: 320px; */
     max-width: 640px;
+    position: relative;
   }
   main div {
-    margin: 4px auto;
-    /* flex-direction: row-reverse; */
-    /* display: flex; */
-    /* align-items: center; */
-    /* gap: 0px; */
-    /* width: 100%; */
-    /* position: relative; */
     vertical-align: middle;
   }
   textarea:disabled {
@@ -983,94 +946,65 @@
   html {
     height: 100vh;
   }
-  label {
-    /* vertical-align: middle; */
-    /* padding: 8px 16px; */
-  }
   button {
-    /* padding: 8px 16px; */
-    /* backdrop-filter: blur(12px); */
     font-size: 16px;
     padding: 16px 0;
+    box-shadow: 0 0 64px #ffffff80;
   }
   a {
     text-decoration: none;
-    /* width: 100%; */
-    /* display: block; */
   }
-  main[data-authenticated="false"] #install {
+  #install {
     pointer-events: none;
     opacity: 0.25;
   }
-  main[data-authenticated="true"] #install {
+  main[data-authenticated="true"] #install.visible {
     pointer-events: initial;
-    opacity: initial;
-    /* text-align: center; */
-    /* margin: 0 auto 24px; */
+    opacity: 1;
   }
   input:-internal-autofill-selected {
-    background: transparent !important;
+    background: 0 0 !important;
   }
   .explanation > * {
-    padding: 0px 32px;
+    padding: 0 32px;
   }
+  button:focus-visible,
   input:focus-visible,
-  select:focus-visible,
-  button:focus-visible {
+  select:focus-visible {
     outline-offset: -1px;
   }
-
   .explanation {
-    /* max-width: 640px; */
-    /* margin: 0 auto 30px; */
-    /* padding: 20px; */
     border: 1px solid #7f7f7f20;
     border-radius: 4px;
     backdrop-filter: blur(12px);
+    box-shadow: 0 0 64px #ffffff80;
   }
-
   .explanation h2 {
-    /* margin: 0 0 15px; */
     font-size: 24px;
     text-align: center;
   }
-
   .explanation p {
-    /* margin: 15px 0; */
     line-height: 1.5;
     font-size: 16px;
   }
-
   .explanation ol,
   .explanation ul {
-    /* margin: 15px 0; */
     padding-left: 60px;
   }
-
   .explanation li {
     margin: 10px 0;
     line-height: 1.5;
     font-size: 16px;
   }
-
   .explanation strong {
     opacity: 1;
   }
-  main > div {
-    /* display: inline-block; */
-    /* padding: 24px 16px; */
-  }
   .controls > div {
-    /* display: block; */
-    /* width: 100%; */
     margin: 8px auto;
     text-align: center;
   }
   .controls > div * {
-    /* display: block; */
     width: 100%;
-    /* margin: 8px auto; */
-    /* text-align: center; */
   }
   .controls > div svg {
     width: unset;
@@ -1079,28 +1013,17 @@
   #installButton span:first-child {
     position: relative;
   }
-
-  /* .first-issue-button {
-    display: block;
-    width: 100%;
-    margin: 8px auto;
-    text-align: center;
+  .controls > div {
+    opacity: 0.25;
+    pointer-events: none;
+    transition: opacity 0.3s ease-in-out;
   }
-
-  #firstIssueButton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    font-size: 16px;
-    padding: 16px 0;
+  .controls > div.visible {
+    opacity: 1;
+    pointer-events: auto;
   }
-
-  #firstIssueButton svg {
-    width: 24px;
-    height: 24px;
-    margin-right: 12px;
-    fill: currentColor;
-  } */
-
+  .controls {
+    position: absolute;
+    width: 100%;
+  }
 }
