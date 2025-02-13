@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="style/style.css" />
     <link rel="stylesheet" href="style/inverted-style.css" />
     <link rel="stylesheet" href="style/special.css" />
+    <link rel="stylesheet" href="style/logger.css" />
     <link rel="icon" href="favicon.svg" type="image/x-icon" />
     <link rel="apple-touch-icon" href="/icon-1000x1000.png" />
     <link rel="canonical" href="https://demo.ubq.fi" />
@@ -16,63 +17,105 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:creator" content="@UbiquityDAO" />
     <meta name="twitter:description" content="A tool to help you set up your instance of UbiquityOS." />
-    <meta name="twitter:title" content="Demoing | UbiquityOS" />
+    <meta name="twitter:title" content="Demo | UbiquityOS" />
     <meta property="og:description" content="A tool to help you set up your instance of UbiquityOS." />
-    <meta property="og:site_name" content="Demoing | UbiquityOS" />
-    <meta property="og:title" content="Demoing | UbiquityOS" />
+    <meta property="og:site_name" content="Demo | UbiquityOS" />
+    <meta property="og:title" content="Demo | UbiquityOS" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://demo.ubq.fi" />
     <meta property="twitter:domain" content="demo.ubq.fi" />
     <meta property="twitter:url" content="https://demo.ubq.fi" />
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no" />
     <link rel="manifest" href="dist/manifest.json" />
-    <title>Demoing | UbiquityOS</title>
+    <title>Demo | UbiquityOS</title>
   </head>
   <body>
     <background>
       <div class="gradient"></div>
       <div class="gradient"></div>
       <div id="grid"></div>
+      <div id="loggerWrap"><pre id="logger"></pre></div>
     </background>
     <main>
-      <div>
-        <label for="chainId">Network</label>
+      <div class="explanation">
+        <h2>Setting Up Your UbiquityOS Demo Environment</h2>
+        <p>Welcome! This tool will help you set up a demo environment for UbiquityOS. Here's what will happen:</p>
+        <ol>
+          <li
+            ><strong>GitHub Login:</strong> First, you'll need to log in with GitHub. We'll only request the minimum permissions (public_repo scope) needed to
+            create and manage a demo repository.</li
+          >
+          <li
+            ><strong>Automatic Setup:</strong> We'll create a public demo repository in your GitHub account and configure it with all necessary UbiquityOS
+            settings.</li
+          >
+          <li
+            ><strong>Interactive Demo:</strong> Install the UbiquityOS app to your repository and start the interactive demo through a GitHub issue. Our AI
+            assistant will guide you through the features.</li
+          >
+        </ol>
+        <p>Don't worry - everything is isolated and secure:</p>
+        <ul>
+          <li>We use minimal GitHub permissions</li>
+          <li>The demo runs in its own repository</li>
+          <li>You can delete the repository at any time</li>
+        </ul>
+      </div>
+
+      <div class="controls">
+        <div id="github-login" class="login">
+          <button type="button" id="github-login-button">
+            <span>
+              <svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 98 98">
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z"
+                />
+              </svg>
+            </span>
+            <span>Login With GitHub</span>
+          </button>
+        </div>
+        <div id="install">
+          <a href="https://github.com/apps/ubiquity-os" target="_blank" class="install-button"
+            ><button type="button" id="installButton"
+              ><span
+                ><svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+                  <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"></path></svg></span
+              ><span>Install App to Repo</span></button
+            ></a
+          ></div
+        >
+        <div id="first-issue">
+          <a id="first-issue-link" target="_blank" class="first-issue-button">
+            <button type="button" id="firstIssueButton">
+              <span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="logo">
+                  <path
+                    d="M320-273v-414q0-17 12-28.5t28-11.5q5 0 10.5 1.5T381-721l326 207q9 6 13.5 15t4.5 19q0 10-4.5 19T707-446L381-239q-5 3-10.5 4.5T360-233q-16 0-28-11.5T320-273Zm80-207Zm0 134 210-134-210-134v268Z"
+                  />
+                </svg>
+              </span>
+              <span>Start Demo</span>
+            </button>
+          </a>
+        </div>
+      </div>
+
+      <div class="inputs" style="display: none">
         <select id="chainId">
-          <option value="1">Ethereum</option>
-          <option value="10">Optimism</option>
-          <option value="56">BNB Smart Chain</option>
-          <option value="100">Gnosis</option>
-          <option value="137">Polygon</option>
-          <option value="324">zkSync Era</option>
-          <option value="480">WorldChain</option>
-          <option value="8453">Base</option>
-          <option value="42161">Arbitrum One</option>
-          <option value="42220">Celo</option>
-          <option value="43114">Avalanche C-Chain</option>
-          <option value="81457">Blast</option>
-          <option value="7777777">Zora</option>
+          <option value="100" selected>Gnosis</option>
         </select>
-      </div>
-      <div>
-        <label for="walletPrivateKey">EVM Wallet Private Key</label>
-        <input type="text" id="walletPrivateKey" />
-      </div>
-      <div>
-        <label for="orgName">Organization Name</label>
+        <input type="hidden" id="walletPrivateKey" value="0000000000000000000000000000000000000000000000000000000000000000" />
         <select id="orgName" disabled></select>
-      </div>
-      <div>
-        <label for="allowance">WXDAI Allowance</label>
-        <input type="number" id="allowance" value="100000" />
-      </div>
-      <div>
-        <button type="button" id="confirmButton">Confirm</button>
+        <input type="hidden" id="allowance" value="100000" />
       </div>
     </main>
-    <textarea type="text" id="outKey" disabled spellcheck="false"></textarea>
+
     <div id="toolbar" class="toolbar" data-authenticated="false">
       <div id="branding">
-        <svg id="logo" viewBox="0 0 860 980" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg class="logo" viewBox="0 0 860 980" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
             fill-rule="evenodd"
             clip-rule="evenodd"
@@ -80,7 +123,7 @@
           />
         </svg>
 
-        <span>UbiquityOS | Demoing</span>
+        <span>UbiquityOS | Demo</span>
       </div>
       <div id="authentication"></div>
     </div>
@@ -115,12 +158,10 @@
         </div>
       </div>
     </div>
-    <div id="bottom-bar" class="toolbar">
-      <div class="statusKey"></div>
-    </div>
     <div id="bottom-right">
       <a href="#" id="git-revision" target="_blank"></a>
     </div>
-    <script src="dist/scripts/demoing/demoing.js" type="application/javascript"></script>
+    <script src="/dist/scripts/logger.js" type="application/javascript"></script>
+    <script src="/dist/scripts/demo/demo.js" type="application/javascript"></script>
   </body>
 </html>

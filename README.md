@@ -1,40 +1,48 @@
-# `@ubiquity/demo.ubq.fi`
+# UbiquityOS Demo Tool
 
-Generates the configuration for organizations, by creating a default configuration and creating a repository under the
-given Organization.
+A streamlined tool to help users set up and try UbiquityOS. The tool provides a simple 3-step process:
 
-## Requirements
+1. **GitHub Authentication**
 
-Copy the `env.example` to `.env` and fill the required variables.
+   - Log in with GitHub using minimal permissions (public_repo scope only)
+   - This allows creating a public demo repository
 
-## Run
+2. **Repository Setup**
 
-```shell
-yarn start
-```
+   - Automatically creates a public demo repository in your GitHub account
+   - Configures the repository with necessary UbiquityOS settings
+   - Pushes initial configuration file
 
-Should make the front-end page available at [http://localhost:8080](http://localhost:8080).
+3. **Interactive Demo**
+   - Install the UbiquityOS GitHub app to enable AI features
+   - Start the interactive demo through a GitHub issue
+   - Interact with the AI assistant to explore features
 
-### Required fields
+The demo environment is isolated and secure:
 
-- `CHAIN_ID`: the id of the network you want to use for the transactions
-- `WALLET_PRIVATE_KEY`: the [64 digits](https://www.browserling.com/tools/random-hex) crypto wallet key that will be used for transactions
-- `GITHUB_PAT`: a [GitHub Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic)
-- `ORG_NAME`: the name of the [organization](https://github.com/settings/organizations) where you want to add the bot
+- Uses minimal GitHub permissions
+- Creates a separate demo repository
+- Repository can be deleted at any time
 
-## Testing
+## Features
 
-To test with Cypress Studio UI, run
+- **Automated Setup**: One-click repository creation and configuration
+- **Minimal Permissions**: Only requests essential GitHub access
+- **Interactive Demo**: Guided exploration of UbiquityOS features
+- **Secure Environment**: Isolated testing environment
+- **Easy Cleanup**: Demo repository can be removed anytime
 
-```shell
-yarn cy:open
-```
+## How It Works
 
-Otherwise to simply run the tests through the console, run
+1. Click "Login with GitHub" to authenticate
+2. The tool automatically creates and configures your demo repository
+3. Click "Install App" to add UbiquityOS to your repository
+4. Click "Start Demo" to begin the interactive demonstration
+5. Follow the AI assistant's guidance in the GitHub issue
 
-```shell
-yarn cy:run
-```
+The demo showcases:
 
-To test in a real-world scenario, you will need to create an Organization under your GitHub account, and use it as a
-dummy. If the operation is successful, you will see a new repository appear with the Ubiquibot configuration.
+- AI-powered task matching
+- Automated task pricing
+- Real-time collaboration
+- Smart contract integration
