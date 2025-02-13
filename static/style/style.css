@@ -948,9 +948,10 @@
     /* overflow: hidden; */
     /* min-width: 320px; */
     max-width: 640px;
+    position: relative;
   }
   main div {
-    margin: 4px auto;
+    /* margin: 4px auto; */
     /* flex-direction: row-reverse; */
     /* display: flex; */
     /* align-items: center; */
@@ -1102,5 +1103,9 @@
     margin-right: 12px;
     fill: currentColor;
   } */
-
+  .controls {
+    position: absolute;
+    /* top: 0; */
+    width: 100%;
+  }
 }
