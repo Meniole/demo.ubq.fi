@@ -956,7 +956,8 @@
   }
   #install {
     pointer-events: none;
-    opacity: 0.25;
+    opacity: 0;
+    /* display: none; */
   }
   main[data-authenticated="true"] #install.visible {
     pointer-events: initial;
@@ -1014,13 +1015,17 @@
     position: relative;
   }
   .controls > div {
-    opacity: 0.25;
+    opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s ease-in-out;
+    transition: opacity 1s ease-in-out;
+    /* display: none; */
+    position: absolute;
+    width: 100%;
   }
   .controls > div.visible {
     opacity: 1;
     pointer-events: auto;
+    /* display: block; */
   }
   .controls {
     position: absolute;
