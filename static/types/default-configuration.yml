@@ -7,6 +7,9 @@ plugins:
       - plugin: https://ubiquity-os-command-wallet-main.ubiquity.workers.dev
   - uses:
       - plugin: ubiquity-os-marketplace/command-ask@main
+        with:
+          model: anthropic/claude-3.5-sonnet
+          openAiBaseUrl: https://openrouter.ai/api/v1
   - uses:
       - plugin: https://ubiquity-os-command-query-user-main.ubiquity.workers.dev
   - uses:
