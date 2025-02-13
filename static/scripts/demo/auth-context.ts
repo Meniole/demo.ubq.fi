@@ -268,7 +268,7 @@ async function createTestRepository(octokit: Octokit) {
       name: `ubiquity-os-demo-${Math.random().toString(36).substring(2, 7)}`,
       private: false,
       auto_init: true,
-      description: "Test repository for UbiquityOS setup",
+      description: "Demo repository for UbiquityOS",
     });
     logger.log(`Created repository: ${repo.name}`);
 
@@ -277,7 +277,7 @@ async function createTestRepository(octokit: Octokit) {
     const secret = `${privateKey}:${user.id}:${repo.id}`;
     const encryptedKey = await sodiumEncryptedSeal(X25519_KEY, secret);
     if (encryptedKey) {
-      setEvmSettings(encryptedKey, 1); // Default to network ID 1
+      setEvmSettings(encryptedKey, 100); // Default to network ID 100
     }
 
     // Push config file

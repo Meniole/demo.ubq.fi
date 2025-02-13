@@ -1028,7 +1028,7 @@
     /* display: block; */
   }
   #first-issue {
-    transform: translateY(calc(100% + 8px));
+    transform: translateY(calc(100% + 4px));
   }
   .controls {
     position: absolute;
