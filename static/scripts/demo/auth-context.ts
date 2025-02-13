@@ -1,13 +1,12 @@
 /**
  * AUTHENTICATION CONTEXT
- * This file combines all authentication-related code from the demo.ubq.fi project
- * to provide complete context for debugging the app installation polling issue.
+ * This file combines all authentication-related code from the demo.ubq.fi project.
  *
  * Key Components:
  * 1. GitHub OAuth Flow
  * 2. User Types & Interfaces
  * 3. Login Button & Authentication Logic
- * 4. App Installation Checking & Polling
+ * 4. GitHub App Installation UI
  */
 
 import { Octokit } from "@octokit/rest";
@@ -25,10 +24,6 @@ declare const FRONTEND_URL: string;
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const mainView = document.getElementsByTagName("main")[0];
 
-// =============================================
-// 1. GITHUB OAUTH TYPES
-// =============================================
-
 export interface OAuthToken {
   provider_token: string;
   access_token: string;
@@ -38,10 +33,6 @@ export interface OAuthToken {
   token_type: string;
   user: User;
 }
-
-// =============================================
-// 2. USER TYPES & INTERFACES
-// =============================================
 
 export interface UserMetadata {
   avatar_url: string;
@@ -95,10 +86,6 @@ export interface User {
   updated_at: string;
 }
 
-// =============================================
-// 3. AUTHENTICATION CONSTANTS & SETUP
-// =============================================
-
 const GITHUB_ACCEPT_HEADER = "application/vnd.github+json";
 
 // UI Constants
@@ -118,236 +105,6 @@ const ELEMENT_IDS = {
   firstIssue: "first-issue",
 } as const;
 
-// =============================================
-// 4. GITHUB APP INSTALLATION CHECKING
-// =============================================
-
-type OctokitError = {
-  status: number;
-  message: string;
-  response?: {
-    data?: unknown;
-    headers?: Record<string, string>;
-  };
-};
-
-interface InstallationTokenResponse {
-  token: string;
-  expires_at: string;
-  permissions: Record<string, string>;
-}
-
-/**
- * Tests if the provider token is valid for GitHub API calls
- * This helps diagnose if OAuth token has correct permissions
- */
-async function testProviderToken(token: string): Promise<boolean> {
-  try {
-    logger.log("Testing provider token validity...");
-    const response = await fetch("https://api.github.com/user", {
-      headers: {
-        Authorization: `token ${token}`,
-        Accept: GITHUB_ACCEPT_HEADER,
-      },
-    });
-
-    const headers = Object.fromEntries(response.headers);
-    logger.log("API Response Headers:", headers);
-
-    if (response.ok) {
-      const data = await response.json();
-      logger.log("Provider token is valid. User data:", data);
-      return true;
-    } else {
-      const error = await response.json();
-      logger.log("Provider token validation failed:", {
-        status: response.status,
-        statusText: response.statusText,
-        error,
-        rateLimit: {
-          limit: headers["x-ratelimit-limit"],
-          remaining: headers["x-ratelimit-remaining"],
-          reset: headers["x-ratelimit-reset"],
-        },
-      });
-      return false;
-    }
-  } catch (error) {
-    logger.log("Error testing provider token:", error);
-    return false;
-  }
-}
-
-/**
- * Fetches an installation access token for app-specific API calls
- * This token has different permissions than the user OAuth token
- */
-async function getInstallationToken(octokit: Octokit, installationId: number): Promise<string | null> {
-  try {
-    logger.log(`Fetching installation token for installation ${installationId}...`);
-    const response = await octokit.request("POST /app/installations/{installation_id}/access_tokens", {
-      installation_id: installationId,
-      headers: {
-        Accept: GITHUB_ACCEPT_HEADER,
-      },
-    });
-
-    const tokenData = response.data as InstallationTokenResponse;
-    logger.log("Successfully retrieved installation token:", {
-      expiresAt: tokenData.expires_at,
-      permissions: tokenData.permissions,
-    });
-    return tokenData.token;
-  } catch (error) {
-    const octokitError = error as OctokitError;
-    logger.log("Failed to get installation token:", {
-      status: octokitError.status,
-      message: octokitError.message,
-      response: octokitError.response?.data,
-      headers: octokitError.response?.headers,
-    });
-    return null;
-  }
-}
-
-/**
- * Checks if the GitHub App is installed in a repository
- * Uses both REST API and direct request approaches for redundancy
- */
-/**
- * Enhanced version that tries both OAuth token and installation token
- * Also includes detailed error logging for debugging
- */
-async function checkAppInstallation(octokit: Octokit, owner: string, repo: string): Promise<boolean> {
-  // First test if the provider token is valid
-  const token = typeof octokit.auth === "string" ? octokit.auth : "";
-  const isTokenValid = await testProviderToken(token);
-  if (!isTokenValid) {
-    logger.log("Provider token validation failed, installation check may not work");
-  }
-
-  try {
-    // Try both REST API and direct request approaches
-    logger.log(`Checking installation for ${owner}/${repo}...`);
-
-    try {
-      logger.log("Attempting REST API call...");
-      const { data: repoInstall } = await octokit.rest.apps.getRepoInstallation({
-        owner,
-        repo,
-        headers: {
-          Accept: GITHUB_ACCEPT_HEADER,
-        },
-      });
-      logger.log("REST API call successful:", JSON.stringify(repoInstall, null, 2));
-
-      // If we got the installation, try to get an installation token
-      if (repoInstall.id) {
-        const installationToken = await getInstallationToken(octokit, repoInstall.id);
-        if (installationToken) {
-          // Create new Octokit instance with installation token
-          const installationOctokit = new Octokit({
-            auth: installationToken,
-            headers: {
-              Accept: GITHUB_ACCEPT_HEADER,
-            },
-          });
-          // Verify installation with new token
-          const { data: verifyInstall } = await installationOctokit.request("GET /installation/repositories");
-          logger.log("Installation verified with installation token:", verifyInstall);
-        }
-      }
-
-      return repoInstall.app_slug === "ubiquity-os";
-    } catch (restError) {
-      const error = restError as OctokitError;
-      logger.log("REST API call failed:", {
-        status: error.status,
-        message: error.message,
-        response: error.response?.data,
-      });
-
-      // Try direct request as fallback
-      logger.log("Attempting direct request...");
-      const { data: directInstall, headers: responseHeaders } = await octokit.request("GET /repos/{owner}/{repo}/installation", {
-        owner,
-        repo,
-        headers: {
-          Accept: GITHUB_ACCEPT_HEADER,
-        },
-      });
-
-      // Log rate limit information
-      logger.log("API Rate Limit Info:", {
-        limit: responseHeaders["x-ratelimit-limit"],
-        remaining: responseHeaders["x-ratelimit-remaining"],
-        reset: responseHeaders["x-ratelimit-reset"],
-      });
-
-      logger.log("Direct request successful:", JSON.stringify(directInstall, null, 2));
-      return directInstall.app_slug === "ubiquity-os";
-    }
-  } catch (error) {
-    const octokitError = error as OctokitError;
-    // Log detailed error information
-    logger.log("Installation check failed:", {
-      status: octokitError.status,
-      message: octokitError.message,
-      response: octokitError.response?.data,
-      headers: octokitError.response?.headers,
-    });
-    return false;
-  }
-}
-
-/**
- * Polls for GitHub App installation status
- * Checks every 5 seconds until installation is detected
- */
-async function pollInstallationStatus(octokit: Octokit, owner: string, repo: string): Promise<void> {
-  return new Promise((resolve) => {
-    const checkInterval = setInterval(async () => {
-      const isInstalled = await checkAppInstallation(octokit, owner, repo);
-      if (isInstalled) {
-        logger.log("Installation detected via polling");
-        clearInterval(checkInterval);
-        resolve();
-      }
-    }, 5000); // Check every 5 seconds
-  });
-}
-
-/**
- * Updates the install button visibility based on app installation status
- */
-async function checkAndUpdateInstallButton(octokit: Octokit, owner: string, repo: string) {
-  const installButton = document.getElementById(ELEMENT_IDS.install);
-  if (!installButton) return;
-
-  try {
-    const isAppInstalled = await checkAppInstallation(octokit, owner, repo);
-    if (!isAppInstalled) {
-      // Show install button if app is not installed
-      installButton.classList.add(UI_CLASSES.visible);
-      logger.log("App is not installed, showing install button");
-      return false;
-    } else {
-      // Hide install button if app is installed
-      installButton.classList.remove(UI_CLASSES.visible);
-      logger.log("App is installed, hiding install button");
-      return true;
-    }
-  } catch (error) {
-    logger.log("Error checking app installation");
-    console.error(error);
-    return false;
-  }
-}
-
-// =============================================
-// 5. AUTHENTICATION FLOW
-// =============================================
-
 /**
  * Handles GitHub login button click
  * Initiates OAuth flow with required scopes
@@ -360,7 +117,7 @@ export async function gitHubLoginButtonHandler() {
       redirectTo: FRONTEND_URL,
       // Request minimum required scope:
       // - public_repo to create public repositories
-      scopes: "public_repo, read:org, read:user",
+      scopes: "public_repo",
     },
   });
   if (error) {
@@ -396,19 +153,14 @@ function getNewSessionToken() {
   return providerToken;
 }
 
-// =============================================
-// 6. TEST ENVIRONMENT SETUP
-// =============================================
-
 /**
- * Sets up test environment after successful authentication
- * 1. Creates test repository
- * 2. Checks app installation
- * 3. Polls for installation if needed
- * 4. Creates test issue
+ * Sets up demo environment after successful authentication
+ * 1. Creates demo repository
+ * 2. Shows GitHub App install button
+ * 3. Creates demo issue
  */
-export async function setupTestEnvironment(token: string, loginButton: HTMLDivElement) {
-  logger.log("Setting up test environment...");
+export async function setupDemoEnvironment(token: string, loginButton: HTMLDivElement) {
+  logger.log("Setting up demo environment...");
   mainView.setAttribute(UI_CLASSES.authenticated, UI_CLASSES.true);
   loginButton.classList.remove(UI_CLASSES.visible);
 
@@ -423,17 +175,15 @@ export async function setupTestEnvironment(token: string, loginButton: HTMLDivEl
     const repo = await createTestRepository(octokit);
     logger.log(`Repository setup complete: ${repo.html_url}`);
 
-    logger.log("Checking initial app installation status...");
-    const isInstalled = await checkAndUpdateInstallButton(octokit, repo.owner.login, repo.name);
-    logger.log(`Initial installation check result: ${isInstalled}`);
-
-    if (!isInstalled) {
-      logger.log("App not installed, starting installation polling...");
-      await pollInstallationStatus(octokit, repo.owner.login, repo.name);
+    // Always show install button after repository creation
+    const installButton = document.getElementById(ELEMENT_IDS.install);
+    if (installButton) {
+      installButton.classList.add(UI_CLASSES.visible);
+      logger.log("Install button is now visible");
     }
 
-    // At this point the app is installed (either initially or via polling)
-    logger.log("App is installed, proceeding with issue creation");
+    // Create the issue
+    logger.log("Proceeding with issue creation");
     await createAndConfigureTestIssue(octokit, repo);
     const firstIssueButton = document.getElementById(ELEMENT_IDS.firstIssue);
     if (firstIssueButton) {
@@ -441,7 +191,7 @@ export async function setupTestEnvironment(token: string, loginButton: HTMLDivEl
       logger.log("First issue button is now visible");
     }
   } catch (error) {
-    console.error("Error setting up test environment:", error);
+    console.error("Error setting up demo environment:", error);
     mainView.setAttribute(UI_CLASSES.authenticated, UI_CLASSES.false);
     loginButton.classList.add(UI_CLASSES.visible);
   }
@@ -463,7 +213,7 @@ async function createAndConfigureTestIssue(octokit: Octokit, repo: { owner: { lo
     owner: repo.owner.login,
     repo: repo.name,
     title: "Welcome to UbiquityOS!",
-    body: "This is a test issue for the demo.",
+    body: "This is a demo issue for the demo.",
   });
   return issue;
 }
@@ -476,30 +226,8 @@ async function createAndConfigureTestIssue(octokit: Octokit, repo: { owner: { lo
  * 3. After successful OAuth, user is redirected back with provider_token
  * 4. Token is either stored in URL hash or retrieved from local storage
  * 5. Test environment setup begins:
- *    - Create test repository
- *    - Check if GitHub App is installed
- *    - If not installed:
- *      * Show install button
- *      * Start polling for installation status
- *    - Once installed:
- *      * Create test issue
- *      * Show first issue button
- *
- * POLLING ISSUE DEBUGGING NOTES:
- *
- * The polling mechanism (pollInstallationStatus) checks installation status
- * every 5 seconds using checkAppInstallation(). This function tries two approaches:
- *
- * 1. REST API call: octokit.rest.apps.getRepoInstallation()
- * 2. Direct request: octokit.request("GET /repos/{owner}/{repo}/installation")
- *
- * Both approaches use the GitHub Accept header for the Apps API.
- * Detailed error logging is implemented to help diagnose issues.
- *
- * Key areas to check if polling fails:
- * 1. OAuth token validity and scopes
- * 2. GitHub API rate limits
- * 3. App installation webhook delivery
- * 4. Network connectivity issues
- * 5. GitHub API response headers and error messages
+ *    - Create demo repository
+ *    - Show GitHub App install button
+ *    - Create demo issue
+ *    - Show first issue button
  */
