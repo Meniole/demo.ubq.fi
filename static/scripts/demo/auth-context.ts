@@ -11,11 +11,54 @@
 
 import { Octokit } from "@octokit/rest";
 import { createClient } from "@supabase/supabase-js";
+import _sodium from "libsodium-wrappers";
+import YAML from "yaml";
 import { getLocalStore } from "./local-store";
+
+// Constants for encryption
+const X25519_KEY = "hdgyJSh473Sf4RJQjovpiKZn5jf-IsGeOBnmDBwYAyY";
+const PRIVATE_ENCRYPTED_KEY_NAME = "evmPrivateEncrypted";
+const EVM_NETWORK_KEY_NAME = "evmNetworkId";
+
+//@ts-expect-error This is taken care of by es-build
+import defaultConf from "../../types/default-configuration.yml";
 
 declare const logger: {
   log: (...args: unknown[]) => void;
 };
+
+async function sodiumEncryptedSeal(publicKey: string, secret: string) {
+  await _sodium.ready;
+  const sodium = _sodium;
+
+  if (!publicKey) {
+    return;
+  }
+
+  const binkey = sodium.from_base64(publicKey, sodium.base64_variants.URLSAFE_NO_PADDING);
+  const binsec = sodium.from_string(secret);
+  const encBytes = sodium.crypto_box_seal(binsec, binkey);
+  return sodium.to_base64(encBytes, sodium.base64_variants.URLSAFE_NO_PADDING);
+}
+
+function stringifyYAML(value: Record<string, unknown>): string {
+  return YAML.stringify(value, { defaultKeyType: "PLAIN", defaultStringType: "QUOTE_DOUBLE", lineWidth: 0 });
+}
+
+function setEvmSettings(privateKey: string, evmNetwork: number) {
+  // Find the text-conversation-rewards plugin
+  for (const plugin of defaultConf.plugins) {
+    for (const use of plugin.uses) {
+      if (use.plugin.includes("text-conversation-rewards")) {
+        use.with = {
+          ...use.with,
+          [PRIVATE_ENCRYPTED_KEY_NAME]: privateKey,
+          [EVM_NETWORK_KEY_NAME]: evmNetwork,
+        };
+      }
+    }
+  }
+}
 
 declare const SUPABASE_URL: string;
 declare const SUPABASE_ANON_KEY: string;
@@ -197,15 +240,54 @@ export async function setupDemoEnvironment(token: string, loginButton: HTMLDivEl
   }
 }
 
-// Helper functions from other files
-async function createTestRepository(octokit: Octokit) {
-  const { data: repo } = await octokit.repos.createForAuthenticatedUser({
-    name: `ubiquity-os-demo-${Math.random().toString(36).substring(2, 7)}`,
-    private: false,
-    auto_init: true,
-    description: "Test repository for UbiquityOS setup",
+async function pushConfigFile(octokit: Octokit, owner: string, repoName: string) {
+  logger.log("Pushing configuration file...");
+  const configPath = ".github/.ubiquity-os.config.yml";
+  logger.log("Updated config:", defaultConf);
+
+  const content = btoa(stringifyYAML(defaultConf));
+  await octokit.repos.createOrUpdateFileContents({
+    owner,
+    repo: repoName,
+    path: configPath,
+    message: "Add UbiquityOS configuration",
+    content,
   });
-  return repo;
+  logger.log("Successfully pushed configuration file");
+}
+
+async function createTestRepository(octokit: Octokit) {
+  logger.log("Creating test repository and encrypting private key...");
+  try {
+    // Get authenticated user
+    const { data: user } = await octokit.users.getAuthenticated();
+    logger.log(`Got authenticated user: ${user.login}`);
+
+    // Create repository
+    const { data: repo } = await octokit.repos.createForAuthenticatedUser({
+      name: `ubiquity-os-demo-${Math.random().toString(36).substring(2, 7)}`,
+      private: false,
+      auto_init: true,
+      description: "Test repository for UbiquityOS setup",
+    });
+    logger.log(`Created repository: ${repo.name}`);
+
+    // Format and encrypt the secret string with both user ID and repo ID
+    const privateKey = "0000000000000000000000000000000000000000000000000000000000000000";
+    const secret = `${privateKey}:${user.id}:${repo.id}`;
+    const encryptedKey = await sodiumEncryptedSeal(X25519_KEY, secret);
+    if (encryptedKey) {
+      setEvmSettings(encryptedKey, 1); // Default to network ID 1
+    }
+
+    // Push config file
+    await pushConfigFile(octokit, user.login, repo.name);
+
+    return repo;
+  } catch (error) {
+    console.error("Error in repository setup:", error);
+    throw error;
+  }
 }
 
 async function createAndConfigureTestIssue(octokit: Octokit, repo: { owner: { login: string }; name: string }) {
@@ -213,8 +295,30 @@ async function createAndConfigureTestIssue(octokit: Octokit, repo: { owner: { lo
     owner: repo.owner.login,
     repo: repo.name,
     title: "Welcome to UbiquityOS!",
-    body: "This is a demo issue for the demo.",
+    body: `This interactive demo showcases how UbiquityOS streamlines development workflows and automates task management.
+
+Comment \`/demo\` below to initiate an interactive demonstration. Your AI team member @ubiquity-os-simulant will guide you through the core features while explaining their business impact.
+
+### Overview
+- Watch AI-powered task matching in action
+- See automated task pricing calculations
+- Experience real-time collaboration features
+- Observe smart contract integration for payments
+
+### Tips
+- Feel free to interact with any of the commands you see during the demo to explore the system yourself!
+- You are also able to create a [new issue](new) to start over at any time.
+- See more commands by commenting \`/help\``,
   });
+
+  logger.log(`Created test issue: ${issue.html_url}`);
+
+  // Configure first issue button
+  const firstIssueLink = document.getElementById("first-issue-link") as HTMLAnchorElement;
+  if (firstIssueLink) {
+    firstIssueLink.href = issue.html_url;
+  }
+
   return issue;
 }
 
