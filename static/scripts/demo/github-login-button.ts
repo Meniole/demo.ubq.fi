@@ -87,6 +87,21 @@ const DATA_AUTHENTICATED = "data-authenticated";
 const DATA_TRUE = "true";
 const DATA_FALSE = "false";
 
+async function checkAppInstallation(octokit: Octokit, owner: string, repo: string): Promise<boolean> {
+  try {
+    // Get the repository installation status
+    const { data: repoData } = await octokit.repos.get({
+      owner,
+      repo,
+    });
+
+    return !!repoData.permissions?.maintain;
+  } catch (error) {
+    console.error("Error checking app installation:", error);
+    return false;
+  }
+}
+
 async function createTestRepository(octokit: Octokit) {
   logger.log("Creating test repository and encrypting private key...");
   try {
@@ -136,8 +151,25 @@ const gitHubLoginButtonWrapper = document.createElement("div");
 gitHubLoginButtonWrapper.className = "login";
 const gitHubLoginButton = document.createElement("button");
 
+async function checkAndUpdateInstallButton(octokit: Octokit, owner: string, repo: string) {
+  const installButton = document.getElementById("install");
+  if (installButton) {
+    const isAppInstalled = await checkAppInstallation(octokit, owner, repo);
+    if (isAppInstalled) {
+      installButton.style.display = "none";
+      logger.log("App is installed, hiding install button");
+    } else {
+      logger.log("App is not installed, showing install button");
+    }
+  }
+}
+
 export async function renderGitHubLoginButton() {
   const token = getSessionToken();
+
+  // Check if we're returning from app installation
+  const searchParams = new URLSearchParams(window.location.search);
+  const installationId = searchParams.get("installation_id");
 
   // If we have a token, try to set up test environment
   if (token) {
@@ -178,6 +210,15 @@ Comment \`/demo\` below to initiate an interactive demonstration. Your AI team m
       if (firstIssueLink) {
         firstIssueLink.href = issue.html_url;
         firstIssueLink.style.display = "inline-block";
+      }
+
+      // Check installation status
+      await checkAndUpdateInstallButton(octokit, repo.owner.login, repo.name);
+
+      // If we just installed the app, refresh the page to clear the URL parameters
+      if (installationId) {
+        window.location.href = window.location.pathname;
+        return;
       }
 
       logger.log("Test environment setup complete!");

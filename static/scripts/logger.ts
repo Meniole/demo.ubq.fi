@@ -39,7 +39,7 @@ const virtualLogger = {
       const totalHeight = entries * (rowHeight + marginHeight);
 
       // Set new height with minimum of 24px
-      const newHeight = Math.max(totalHeight, 24);
+      const newHeight = Math.max(totalHeight, 16);
       loggerElement.style.height = `${newHeight}px`;
     }
   },
