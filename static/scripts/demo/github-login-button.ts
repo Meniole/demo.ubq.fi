@@ -153,18 +153,23 @@ const gitHubLoginButton = document.createElement("button");
 
 async function checkAndUpdateInstallButton(octokit: Octokit, owner: string, repo: string) {
   const installButton = document.getElementById("install");
-  if (installButton) {
+  const firstIssueButton = document.getElementById("first-issue");
+  if (installButton && firstIssueButton) {
     try {
       const isAppInstalled = await checkAppInstallation(octokit, owner, repo);
       if (!isAppInstalled) {
-        installButton.style.display = "inline-block";
+        installButton.classList.add("visible");
         logger.log("App is not installed, showing install button");
       } else {
         logger.log("App is installed, keeping install button hidden");
       }
+      // Always show the first issue button since it's needed for the demo
+      firstIssueButton.classList.add("visible");
     } catch (error) {
       logger.log("Error checking app installation, keeping install button hidden");
       console.error(error);
+      // Still show first issue button even if there's an error
+      firstIssueButton.classList.add("visible");
     }
   }
 }
@@ -210,11 +215,10 @@ Comment \`/demo\` below to initiate an interactive demonstration. Your AI team m
       });
       logger.log(`Created test issue: ${issue.html_url}`);
 
-      // Show and configure first issue button
+      // Configure first issue button
       const firstIssueLink = document.getElementById("first-issue-link") as HTMLAnchorElement;
       if (firstIssueLink) {
         firstIssueLink.href = issue.html_url;
-        firstIssueLink.style.display = "inline-block";
       }
 
       // Check installation status
