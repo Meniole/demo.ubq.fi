@@ -154,12 +154,17 @@ const gitHubLoginButton = document.createElement("button");
 async function checkAndUpdateInstallButton(octokit: Octokit, owner: string, repo: string) {
   const installButton = document.getElementById("install");
   if (installButton) {
-    const isAppInstalled = await checkAppInstallation(octokit, owner, repo);
-    if (isAppInstalled) {
-      installButton.style.display = "none";
-      logger.log("App is installed, hiding install button");
-    } else {
-      logger.log("App is not installed, showing install button");
+    try {
+      const isAppInstalled = await checkAppInstallation(octokit, owner, repo);
+      if (!isAppInstalled) {
+        installButton.style.display = "inline-block";
+        logger.log("App is not installed, showing install button");
+      } else {
+        logger.log("App is installed, keeping install button hidden");
+      }
+    } catch (error) {
+      logger.log("Error checking app installation, keeping install button hidden");
+      console.error(error);
     }
   }
 }
