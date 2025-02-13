@@ -953,13 +953,13 @@
   a {
     text-decoration: none;
   }
-  main[data-authenticated="false"] #install {
+  #install {
     pointer-events: none;
     opacity: 0.25;
   }
-  main[data-authenticated="true"] #install {
+  main[data-authenticated="true"] #install.visible {
     pointer-events: initial;
-    opacity: initial;
+    opacity: 1;
   }
   input:-internal-autofill-selected {
     background: 0 0 !important;
@@ -1012,12 +1012,16 @@
     position: relative;
   }
   .controls > div {
-    opacity: 0;
+    opacity: 0.25;
     pointer-events: none;
     transition: opacity 0.3s ease-in-out;
   }
   .controls > div.visible {
     opacity: 1;
     pointer-events: auto;
+  }
+  .controls {
+    position: absolute;
+    width: 100%;
   }
 }

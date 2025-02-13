@@ -86,6 +86,7 @@ const TEST_REPO_PREFIX = "ubiquity-os-demo-";
 const DATA_AUTHENTICATED = "data-authenticated";
 const DATA_TRUE = "true";
 const DATA_FALSE = "false";
+const VISIBLE_CLASS = "visible";
 
 async function checkAppInstallation(octokit: Octokit, owner: string, repo: string): Promise<boolean> {
   try {
@@ -100,6 +101,53 @@ async function checkAppInstallation(octokit: Octokit, owner: string, repo: strin
     console.error("Error checking app installation:", error);
     return false;
   }
+}
+
+async function pushConfigFile(octokit: Octokit, owner: string, repoName: string) {
+  logger.log("Pushing configuration file...");
+  const configPath = ".github/.ubiquity-os.config.yml";
+  logger.log("Updated config:", defaultConf);
+
+  const content = btoa(stringifyYAML(defaultConf));
+  await octokit.repos.createOrUpdateFileContents({
+    owner,
+    repo: repoName,
+    path: configPath,
+    message: "Add UbiquityOS configuration",
+    content,
+  });
+  logger.log("Successfully pushed configuration file");
+}
+
+async function createAndConfigureTestIssue(octokit: Octokit, repo: { owner: { login: string }; name: string }) {
+  const { data: issue } = await octokit.issues.create({
+    owner: repo.owner.login,
+    repo: repo.name,
+    title: "Welcome to UbiquityOS!",
+    body: `This interactive demo showcases how UbiquityOS streamlines development workflows and automates task management.
+
+Comment \`/demo\` below to initiate an interactive demonstration. Your AI team member @ubiquity-os-simulant will guide you through the core features while explaining their business impact.
+
+### Overview
+- Watch AI-powered task matching in action
+- See automated task pricing calculations
+- Experience real-time collaboration features
+- Observe smart contract integration for payments
+
+### Tips
+- Feel free to interact with any of the commands you see during the demo to explore the system yourself!
+- You are also able to create a [new issue](new) to start over at any time.
+- See more commands by commenting \`/help\``,
+  });
+  logger.log(`Created test issue: ${issue.html_url}`);
+
+  // Configure first issue button
+  const firstIssueLink = document.getElementById("first-issue-link") as HTMLAnchorElement;
+  if (firstIssueLink) {
+    firstIssueLink.href = issue.html_url;
+  }
+
+  return issue;
 }
 
 async function createTestRepository(octokit: Octokit) {
@@ -124,22 +172,8 @@ async function createTestRepository(octokit: Octokit) {
     await sodiumEncryptedSeal(X25519_KEY, secret);
 
     // Push config file
-    logger.log("Pushing configuration file...");
-    const configPath = ".github/.ubiquity-os.config.yml";
-    logger.log("Updated config:", defaultConf);
+    await pushConfigFile(octokit, user.login, repo.name);
 
-    // Convert config to base64
-    const content = btoa(stringifyYAML(defaultConf));
-
-    await octokit.repos.createOrUpdateFileContents({
-      owner: user.login,
-      repo: repo.name,
-      path: configPath,
-      message: "Add UbiquityOS configuration",
-      content: content,
-    });
-
-    logger.log("Successfully pushed configuration file");
     return repo;
   } catch (error) {
     console.error("Error in repository setup:", error);
@@ -150,32 +184,48 @@ async function createTestRepository(octokit: Octokit) {
 const gitHubLoginButtonWrapper = document.createElement("div");
 gitHubLoginButtonWrapper.className = "login";
 const gitHubLoginButton = document.createElement("button");
-
+const firstIssueId = "first-issue";
 async function checkAndUpdateInstallButton(octokit: Octokit, owner: string, repo: string) {
   const installButton = document.getElementById("install");
-  const firstIssueButton = document.getElementById("first-issue");
+  const firstIssueButton = document.getElementById(firstIssueId);
   if (installButton && firstIssueButton) {
     try {
       const isAppInstalled = await checkAppInstallation(octokit, owner, repo);
       if (!isAppInstalled) {
-        installButton.classList.add("visible");
+        // Show install button if app is not installed
+        installButton.classList.add(VISIBLE_CLASS);
+        // Hide demo button until app is installed
+        firstIssueButton.classList.remove(VISIBLE_CLASS);
         logger.log("App is not installed, showing install button");
       } else {
-        logger.log("App is installed, keeping install button hidden");
+        // Hide install button and show demo button if app is installed
+        installButton.classList.remove(VISIBLE_CLASS);
+        firstIssueButton.classList.add(VISIBLE_CLASS);
+        logger.log("App is installed, showing demo button");
       }
-      // Always show the first issue button since it's needed for the demo
-      firstIssueButton.classList.add("visible");
     } catch (error) {
-      logger.log("Error checking app installation, keeping install button hidden");
+      logger.log("Error checking app installation, hiding both buttons");
       console.error(error);
-      // Still show first issue button even if there's an error
-      firstIssueButton.classList.add("visible");
+      installButton.classList.remove(VISIBLE_CLASS);
+      firstIssueButton.classList.remove(VISIBLE_CLASS);
     }
   }
 }
 
 export async function renderGitHubLoginButton() {
   const token = getSessionToken();
+
+  // Always create the login button first
+  gitHubLoginButtonWrapper.appendChild(gitHubLoginButton);
+  gitHubLoginButton.id = "github-login-button";
+  gitHubLoginButton.innerHTML = `<span><svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 98 98"><path fill-rule="evenodd" clip-rule="evenodd" d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z" /></svg></span>`;
+  gitHubLoginButton.innerHTML += "<span>Login</span><span class='full'>&nbsp;With GitHub</span>";
+  gitHubLoginButton.addEventListener("click", gitHubLoginButtonHandler);
+  if (controlsView) {
+    controlsView.insertBefore(gitHubLoginButtonWrapper, controlsView.firstChild);
+    // Make login button visible by default
+    gitHubLoginButtonWrapper.classList.add(VISIBLE_CLASS);
+  }
 
   // Check if we're returning from app installation
   const searchParams = new URLSearchParams(window.location.search);
@@ -185,6 +235,12 @@ export async function renderGitHubLoginButton() {
   if (token) {
     logger.log("User is authenticated, setting up test environment...");
     mainView.setAttribute(DATA_AUTHENTICATED, DATA_TRUE);
+    // Hide login button and ensure other buttons are hidden until we check installation
+    gitHubLoginButtonWrapper.classList.remove(VISIBLE_CLASS);
+    const installButton = document.getElementById("install");
+    const firstIssueButton = document.getElementById(firstIssueId);
+    if (installButton) installButton.classList.remove(VISIBLE_CLASS);
+    if (firstIssueButton) firstIssueButton.classList.remove(VISIBLE_CLASS);
 
     try {
       const octokit = new Octokit({ auth: token });
@@ -193,40 +249,17 @@ export async function renderGitHubLoginButton() {
       const repo = await createTestRepository(octokit);
       logger.log(`Repository setup complete: ${repo.html_url}`);
 
-      // Create test issue
-      const { data: issue } = await octokit.issues.create({
-        owner: repo.owner.login,
-        repo: repo.name,
-        title: "Welcome to UbiquityOS!",
-        body: `This interactive demo showcases how UbiquityOS streamlines development workflows and automates task management.
-
-Comment \`/demo\` below to initiate an interactive demonstration. Your AI team member @ubiquity-os-simulant will guide you through the core features while explaining their business impact.
-
-### Overview
-- Watch AI-powered task matching in action
-- See automated task pricing calculations
-- Experience real-time collaboration features
-- Observe smart contract integration for payments
-
-### Tips
-- Feel free to interact with any of the commands you see during the demo to explore the system yourself!
-- You are also able to create a [new issue](new) to start over at any time.
-- See more commands by commenting \`/help\``,
-      });
-      logger.log(`Created test issue: ${issue.html_url}`);
-
-      // Configure first issue button
-      const firstIssueLink = document.getElementById("first-issue-link") as HTMLAnchorElement;
-      if (firstIssueLink) {
-        firstIssueLink.href = issue.html_url;
-      }
+      // Create and configure test issue
+      await createAndConfigureTestIssue(octokit, repo);
 
       // Check installation status
       await checkAndUpdateInstallButton(octokit, repo.owner.login, repo.name);
 
-      // If we just installed the app, refresh the page to clear the URL parameters
+      // If we just installed the app, check installation status again
       if (installationId) {
-        window.location.href = window.location.pathname;
+        await checkAndUpdateInstallButton(octokit, repo.owner.login, repo.name);
+        // Clean up URL parameters
+        window.history.replaceState({}, document.title, window.location.pathname);
         return;
       }
 
@@ -239,15 +272,13 @@ Comment \`/demo\` below to initiate an interactive demonstration. Your AI team m
   } else {
     logger.log("User not authenticated, showing login button...");
     mainView.setAttribute(DATA_AUTHENTICATED, DATA_FALSE);
-  }
-
-  gitHubLoginButtonWrapper.appendChild(gitHubLoginButton);
-  gitHubLoginButton.id = "github-login-button";
-  gitHubLoginButton.innerHTML = `<span><svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 98 98"><path fill-rule="evenodd" clip-rule="evenodd" d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z" /></svg></span>`;
-  gitHubLoginButton.innerHTML += "<span>Login</span><span class='full'>&nbsp;With GitHub</span>";
-  gitHubLoginButton.addEventListener("click", gitHubLoginButtonHandler);
-  if (controlsView) {
-    controlsView.insertBefore(gitHubLoginButtonWrapper, controlsView.firstChild);
+    // Ensure login button is visible when not authenticated
+    gitHubLoginButtonWrapper.classList.add(VISIBLE_CLASS);
+    // Hide other buttons when not authenticated
+    const installButton = document.getElementById("install");
+    const firstIssueButton = document.getElementById(firstIssueId);
+    if (installButton) installButton.classList.remove(VISIBLE_CLASS);
+    if (firstIssueButton) firstIssueButton.classList.remove(VISIBLE_CLASS);
   }
 }
 
