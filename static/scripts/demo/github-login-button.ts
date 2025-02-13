@@ -151,10 +151,32 @@ export async function renderGitHubLoginButton() {
       const repo = await createTestRepository(octokit);
       logger.log(`Repository setup complete: ${repo.html_url}`);
 
+      // Create test issue
+      const { data: issue } = await octokit.issues.create({
+        owner: repo.owner.login,
+        repo: repo.name,
+        title: "Welcome to UbiquityOS!",
+        body: `This interactive demo showcases how UbiquityOS streamlines development workflows and automates task management.
+
+Comment \`/demo\` below to initiate an interactive demonstration. Your AI team member @ubiquity-os-simulant will guide you through the core features while explaining their business impact.
+
+### Overview
+- Watch AI-powered task matching in action
+- See automated task pricing calculations
+- Experience real-time collaboration features
+- Observe smart contract integration for payments
+
+### Tips
+- Feel free to interact with any of the commands you see during the demo to explore the system yourself!
+- You are also able to create a [new issue](new) to start over at any time.
+- See more commands by commenting \`/help\``,
+      });
+      logger.log(`Created test issue: ${issue.html_url}`);
+
       // Show and configure first issue button
       const firstIssueLink = document.getElementById("first-issue-link") as HTMLAnchorElement;
       if (firstIssueLink) {
-        firstIssueLink.href = `${repo.html_url}/issues/1`;
+        firstIssueLink.href = issue.html_url;
         firstIssueLink.style.display = "inline-block";
       }
 
