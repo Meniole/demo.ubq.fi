@@ -62,7 +62,6 @@ function setEvmSettings(privateKey: string, evmNetwork: number) {
 
 declare const SUPABASE_URL: string;
 declare const SUPABASE_ANON_KEY: string;
-declare const FRONTEND_URL: string;
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const mainView = document.getElementsByTagName("main")[0];
@@ -157,7 +156,7 @@ export async function gitHubLoginButtonHandler() {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "github",
     options: {
-      redirectTo: FRONTEND_URL,
+      redirectTo: window.location.href,
       // Request minimum required scope:
       // - public_repo to create public repositories
       scopes: "public_repo",
