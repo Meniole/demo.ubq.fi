@@ -40,7 +40,7 @@ export const esBuildContext: esbuild.BuildOptions = {
   outdir: outDir,
   outbase: "static",
   absWorkingDir: process.cwd(),
-  define: createEnvDefines(["SUPABASE_URL", "SUPABASE_ANON_KEY", "FRONTEND_URL"], {
+  define: createEnvDefines(["SUPABASE_URL", "SUPABASE_ANON_KEY"], {
     commitHash: execSync(`git rev-parse --short HEAD`).toString().trim(),
   }),
 };
