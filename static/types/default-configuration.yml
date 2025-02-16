@@ -1,7 +1,7 @@
 plugins:
   - uses:
       - plugin: https://ubiquity-os-command-start-stop-main.ubiquity.workers.dev
-        skipbotEvents: false
+        skipBotEvents: false
   - uses:
       - plugin: https://ubiquity-os-command-demo-development.ubiquity.workers.dev
   - uses:
