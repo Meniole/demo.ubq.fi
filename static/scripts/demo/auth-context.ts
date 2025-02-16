@@ -274,7 +274,6 @@ async function createTestRepository(octokit: Octokit) {
     // Format and encrypt the secret string with both user ID and repo ID
     const privateKey = BigInt(1).toString(16).padStart(64, "0"); // 0x1 which is the smallest valid key.
     const secret = `${privateKey}:${user.id}:${repo.id}`;
-    console.dir(secret);
     const encryptedKey = await sodiumEncryptedSeal(X25519_KEY, secret);
     if (encryptedKey) {
       setEvmSettings(encryptedKey, 100); // Default to network ID 100
@@ -294,6 +293,11 @@ async function createTestRepository(octokit: Octokit) {
         name: "Time: <2 Hours",
         color: "ededed", // green color
         description: "Tasks that take less than 2 hours",
+      },
+      {
+        name: "Price: 75 USD",
+        color: "1f883d", // green color
+        description: "75 USD reward for completion",
       },
     ];
 
@@ -329,7 +333,7 @@ async function createAndConfigureTestIssue(octokit: Octokit, repo: { owner: { lo
     owner: repo.owner.login,
     repo: repo.name,
     title: "Welcome to UbiquityOS!",
-    labels: ["Priority: 3 (High)", "Time: <2 Hours"],
+    labels: ["Priority: 3 (High)", "Time: <2 Hours", "Price: 75 USD"],
     body: `This interactive demo showcases how UbiquityOS streamlines development workflows and automates task management.
 
 Comment \`/demo\` below to initiate an interactive demonstration. Your AI team member @ubiquity-os-simulant will guide you through the core features while explaining their business impact.
