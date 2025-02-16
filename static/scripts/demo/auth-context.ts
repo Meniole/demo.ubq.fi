@@ -359,6 +359,12 @@ Comment \`/demo\` below to initiate an interactive demonstration. Your AI team m
     firstIssueLink.href = issue.html_url;
   }
 
+  const repoNameDisplay = document.getElementById(`repo-name`) as HTMLSpanElement;
+  if (repoNameDisplay) {
+    const urlParts = issue.html_url.split("/");
+    repoNameDisplay.textContent = `"${urlParts[3]}/${urlParts[4]}"`;
+  }
+
   return issue;
 }
 

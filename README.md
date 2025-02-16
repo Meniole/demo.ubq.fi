@@ -20,7 +20,6 @@ A streamlined tool to help users set up and try UbiquityOS. The tool provides a 
 
 The demo environment is isolated and secure:
 
-- Uses minimal GitHub permissions
 - Creates a separate demo repository
 - Repository can be deleted at any time
 
