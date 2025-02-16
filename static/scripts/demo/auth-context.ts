@@ -333,7 +333,7 @@ async function createAndConfigureTestIssue(octokit: Octokit, repo: { owner: { lo
     owner: repo.owner.login,
     repo: repo.name,
     title: "Welcome to UbiquityOS!",
-    labels: ["Priority: 3 (High)", "Time: <2 Hours", "Price: 75 USD"],
+    labels: ["Priority: 3 (High)", "Time: <2 Hours"],
     body: `This interactive demo showcases how UbiquityOS streamlines development workflows and automates task management.
 
 Comment \`/demo\` below to initiate an interactive demonstration. Your AI team member @ubiquity-os-simulant will guide you through the core features while explaining their business impact.
