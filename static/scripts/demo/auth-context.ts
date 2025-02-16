@@ -284,6 +284,40 @@ async function createTestRepository(octokit: Octokit) {
     // Push config file
     await pushConfigFile(octokit, user.login, repo.name);
 
+    // Create required labels
+    const labels = [
+      {
+        name: "Priority: 3 (High)",
+        color: "ededed", // red color
+        description: "High priority tasks",
+      },
+      {
+        name: "Time: <2 Hours",
+        color: "ededed", // green color
+        description: "Tasks that take less than 2 hours",
+      },
+    ];
+
+    // Create labels, ignoring errors if they already exist
+    for (const label of labels) {
+      try {
+        await octokit.issues.createLabel({
+          owner: user.login,
+          repo: repo.name,
+          ...label,
+        });
+        logger.log(`Created label: ${label.name}`);
+      } catch (error) {
+        // Type guard to check if it's a GitHub API error
+        if (error && typeof error === "object" && "status" in error && error.status === 422) {
+          logger.log(`Label already exists: ${label.name}`);
+        } else {
+          // Log but don't throw other errors to allow the demo to continue
+          console.error(`Error creating label ${label.name}:`, error);
+        }
+      }
+    }
+
     return repo;
   } catch (error) {
     console.error("Error in repository setup:", error);
@@ -296,6 +330,7 @@ async function createAndConfigureTestIssue(octokit: Octokit, repo: { owner: { lo
     owner: repo.owner.login,
     repo: repo.name,
     title: "Welcome to UbiquityOS!",
+    labels: ["Priority: 3 (High)", "Time: <2 Hours"],
     body: `This interactive demo showcases how UbiquityOS streamlines development workflows and automates task management.
 
 Comment \`/demo\` below to initiate an interactive demonstration. Your AI team member @ubiquity-os-simulant will guide you through the core features while explaining their business impact.
