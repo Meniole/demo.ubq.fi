@@ -1,5 +1,8 @@
 plugins:
   - uses:
+      - plugin: https://ubiquity-os-command-start-stop-main.ubiquity.workers.dev
+        skipbotEvents: false
+  - uses:
       - plugin: https://ubiquity-os-command-demo-development.ubiquity.workers.dev
   - uses:
       - plugin: https://ubiquity-os-command-wallet-main.ubiquity.workers.dev
