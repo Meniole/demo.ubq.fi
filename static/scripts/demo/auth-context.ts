@@ -62,7 +62,6 @@ function setEvmSettings(privateKey: string, evmNetwork: number) {
 
 declare const SUPABASE_URL: string;
 declare const SUPABASE_ANON_KEY: string;
-declare const FRONTEND_URL: string;
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const mainView = document.getElementsByTagName("main")[0];
@@ -157,7 +156,7 @@ export async function gitHubLoginButtonHandler() {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "github",
     options: {
-      redirectTo: FRONTEND_URL,
+      redirectTo: window.location.href,
       // Request minimum required scope:
       // - public_repo to create public repositories
       scopes: "public_repo",
@@ -336,10 +335,11 @@ async function createAndConfigureTestIssue(octokit: Octokit, repo: { owner: { lo
 Comment \`/demo\` below to initiate an interactive demonstration. Your AI team member @ubiquity-os-simulant will guide you through the core features while explaining their business impact.
 
 ### Overview
-- Watch AI-powered task matching in action
-- See automated task pricing calculations
-- Experience real-time collaboration features
-- Observe smart contract integration for payments
+- Discover automated pricing for tasks
+- Explore context-sensitive inquiry capabilities
+- Engage with live collaboration tools
+- Understand comprehensive contribution tracking
+- Experience payment integration via smart contracts
 
 ### Tips
 - Feel free to interact with any of the commands you see during the demo to explore the system yourself!
