@@ -1,6 +1,6 @@
 plugins:
   - uses:
-      - plugin: https://ubiquity-os-plugin-demo-main.ubiquity.workers.dev
+      - plugin: https://ubiquity-os-command-demo-main.ubiquity.workers.dev
   - uses:
       - plugin: https://ubiquity-os-command-wallet-main.ubiquity.workers.dev
   - uses:
