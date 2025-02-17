@@ -2,6 +2,10 @@ plugins:
   - uses:
       - plugin: https://ubiquity-os-command-start-stop-main.ubiquity.workers.dev
         skipBotEvents: false
+        with:
+          maxConcurrentTasks:
+            collaborator: 999999
+            contributor: 999999
   - uses:
       - plugin: https://ubiquity-os-plugin-demo-main.ubiquity.workers.dev
   - uses:
