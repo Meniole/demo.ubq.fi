@@ -18,9 +18,6 @@ plugins:
   - uses:
       - plugin: https://ubiquity-os-command-query-user-main.ubiquity.workers.dev
   - uses:
-      - plugin: https://ubiquity-os-daemon-pricing-main.ubiquity.workers.dev
-        skipBotEvents: false
-  - uses:
       - plugin: "ubiquity-os-marketplace/text-conversation-rewards@main"
         skipBotEvents: false
         with:
