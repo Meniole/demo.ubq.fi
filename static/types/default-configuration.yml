@@ -18,7 +18,7 @@ plugins:
   - uses:
       - plugin: https://ubiquity-os-command-query-user-main.ubiquity.workers.dev
   - uses:
-      - plugin: "ubiquity-os-marketplace/text-conversation-rewards@main"
+      - plugin: "ubiquity-os-marketplace/text-conversation-rewards@demo"
         skipBotEvents: false
         with:
           incentives:
