@@ -13,15 +13,14 @@ import { Octokit } from "@octokit/rest";
 import { createClient } from "@supabase/supabase-js";
 import _sodium from "libsodium-wrappers";
 import YAML from "yaml";
+//@ts-expect-error This is taken care of by es-build
+import defaultConf from "../../types/default-configuration.yml";
 import { getLocalStore } from "./local-store";
 
 // Constants for encryption
 const X25519_KEY = "hdgyJSh473Sf4RJQjovpiKZn5jf-IsGeOBnmDBwYAyY";
 const PRIVATE_ENCRYPTED_KEY_NAME = "evmPrivateEncrypted";
 const EVM_NETWORK_KEY_NAME = "evmNetworkId";
-
-//@ts-expect-error This is taken care of by es-build
-import defaultConf from "../../types/default-configuration.yml";
 
 declare const logger: {
   log: (...args: unknown[]) => void;
@@ -224,6 +223,9 @@ export async function setupDemoEnvironment(token: string, loginButton: HTMLDivEl
       logger.log("Install button is now visible");
     }
 
+    logger.log("Inviting the demo user as a collaborator");
+    await inviteUserAsCollaborator(octokit, repo);
+
     // Create the issue
     logger.log("Proceeding with issue creation");
     await createAndConfigureTestIssue(octokit, repo);
@@ -366,6 +368,16 @@ Comment \`/demo\` below to initiate an interactive demonstration. Your AI team m
   }
 
   return issue;
+}
+
+async function inviteUserAsCollaborator(octokit: Octokit, repo: { owner: { login: string }; name: string }) {
+  const { data } = await octokit.users.getAuthenticated();
+  return octokit.rest.repos.addCollaborator({
+    owner: repo.owner.login,
+    repo: repo.name,
+    username: data.login,
+    permission: "push",
+  });
 }
 
 /**
