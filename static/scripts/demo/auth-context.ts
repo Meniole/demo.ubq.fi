@@ -217,7 +217,7 @@ export async function setupDemoEnvironment(token: string, loginButton: HTMLDivEl
     logger.log(`Repository setup complete: ${repo.html_url}`);
 
     logger.log("Inviting the demo user as a collaborator");
-    await inviteUserAsCollaborator(octokit, repo);
+    // await inviteUserAsCollaborator(octokit, repo);
 
     // Always show install button after repository creation
     const installButton = document.getElementById(ELEMENT_IDS.install);
