@@ -216,6 +216,9 @@ export async function setupDemoEnvironment(token: string, loginButton: HTMLDivEl
     const repo = await createTestRepository(octokit);
     logger.log(`Repository setup complete: ${repo.html_url}`);
 
+    logger.log("Inviting the demo user as a collaborator");
+    await inviteUserAsCollaborator(octokit, repo);
+
     // Always show install button after repository creation
     const installButton = document.getElementById(ELEMENT_IDS.install);
     if (installButton) {
@@ -365,6 +368,18 @@ Comment \`/demo\` below to initiate an interactive demonstration. Your AI team m
   }
 
   return issue;
+}
+
+async function inviteUserAsCollaborator(octokit: Octokit, repo: { owner: { login: string }; name: string }) {
+  const botUserName = "ubiquity-os-collaborant";
+  await octokit.rest.repos.addCollaborator({
+    owner: repo.owner.login,
+    repo: repo.name,
+    username: botUserName,
+    permission: "push",
+  });
+
+  logger.log(`Invited ${botUserName} collaborator for ${repo.owner.login}/${repo.name}`);
 }
 
 /**
