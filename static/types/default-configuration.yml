@@ -1,23 +1,23 @@
 plugins:
   - uses:
-      - plugin: https://ubiquity-os-command-start-stop-development.fernand-veyrier.workers.dev
+      - plugin: https://ubiquity-os-command-start-stop-main.ubiquity.workers.dev
         skipBotEvents: false
         with:
           maxConcurrentTasks:
             collaborator: 999999
             contributor: 999999
   - uses:
-      - plugin: https://ubiquity-os-plugin-demo-fix-collaborator-add.fernand-veyrier.workers.dev
-  #      - plugin: https://ubiquity-os-plugin-demo-development.fernand-veyrier.workers.dev
+      - plugin: https://ubiquity-os-plugin-demo-fix-collaborator-add.ubiquity.workers.dev
+  #      - plugin: https://ubiquity-os-plugin-demo-main.ubiquity.workers.dev
   - uses:
-      - plugin: https://ubiquity-os-command-wallet-development.fernand-veyrier.workers.dev
+      - plugin: https://ubiquity-os-command-wallet-main.ubiquity.workers.dev
   - uses:
-      - plugin: Meniole/command-ask@development
+      - plugin: Meniole/command-ask@main
         with:
           model: anthropic/claude-3.5-sonnet
           openAiBaseUrl: https://openrouter.ai/api/v1
   - uses:
-      - plugin: https://ubiquity-os-command-query-user-development.fernand-veyrier.workers.dev
+      - plugin: https://ubiquity-os-command-query-user-main.ubiquity.workers.dev
   - uses:
       - plugin: "Meniole/text-conversation-rewards@demo"
         skipBotEvents: false
@@ -34,6 +34,6 @@ plugins:
           erc20RewardToken: "0xC6ed4f520f6A4e4DC27273509239b7F8A68d2068"
           evmNetworkId: 100
   - uses:
-      - plugin: Meniole/daemon-disqualifier@development
+      - plugin: Meniole/daemon-disqualifier@main
   - uses:
-      - plugin: https://ubiquity-os-comment-vector-embeddings-development.fernand-veyrier.workers.dev
+      - plugin: https://ubiquity-os-comment-vector-embeddings-main.ubiquity.workers.dev
