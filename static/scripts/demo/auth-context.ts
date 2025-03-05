@@ -371,7 +371,7 @@ Comment \`/demo\` below to initiate an interactive demonstration. Your AI team m
 }
 
 async function inviteUserAsCollaborator(octokit: Octokit, repo: { owner: { login: string }; name: string }) {
-  const botUserName = "ubiquity-os-collaborant";
+  const botUserName = "ubiquity-os-simulant";
   await octokit.rest.repos.addCollaborator({
     owner: repo.owner.login,
     repo: repo.name,
