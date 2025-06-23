@@ -1,24 +1,24 @@
 plugins:
   - uses:
-      - plugin: https://ubiquity-os-command-start-stop-main.ubiquity.workers.dev
+      - plugin: https://command-start-stop-main.deno.dev
         skipBotEvents: false
         with:
           maxConcurrentTasks:
             collaborator: 999999
             contributor: 999999
   - uses:
-      - plugin: https://ubiquity-os-plugin-demo-main.ubiquity.workers.dev
+      - plugin: https://command-demo-main.deno.dev
   - uses:
-      - plugin: https://ubiquity-os-command-wallet-main.ubiquity.workers.dev
+      - plugin: https://command-wallet-main.deno.dev
   - uses:
       - plugin: ubiquity-os-marketplace/command-ask@main
         with:
           model: anthropic/claude-3.5-sonnet
           openAiBaseUrl: https://openrouter.ai/api/v1
   - uses:
-      - plugin: https://ubiquity-os-command-query-user-main.ubiquity.workers.dev
+      - plugin: https://command-query-main.deno.dev
   - uses:
-      - plugin: "ubiquity-os-marketplace/text-conversation-rewards@demo"
+      - plugin: ubiquity-os-marketplace/text-conversation-rewards@demo
         skipBotEvents: false
         with:
           incentives:
@@ -35,4 +35,4 @@ plugins:
   - uses:
       - plugin: ubiquity-os-marketplace/daemon-disqualifier@main
   - uses:
-      - plugin: https://ubiquity-os-comment-vector-embeddings-main.ubiquity.workers.dev
+      - plugin: ubiquity-os-marketplace/text-vector-embeddings@main
