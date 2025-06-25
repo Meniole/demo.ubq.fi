@@ -1,22 +1,22 @@
 plugins:
   - uses:
-      - plugin: https://command-start-stop-main.deno.dev
+      - plugin: https://os-command-start-stop.ubq.fi
         skipBotEvents: false
         with:
           maxConcurrentTasks:
             collaborator: 999999
             contributor: 999999
   - uses:
-      - plugin: https://command-demo-main.deno.dev
+      - plugin: https://os-command-demo.ubq.fi
   - uses:
-      - plugin: https://command-wallet-main.deno.dev
+      - plugin: https://os-command-wallet.ubq.fi
   - uses:
       - plugin: ubiquity-os-marketplace/command-ask@main
         with:
-          model: anthropic/claude-3.5-sonnet
+          model: deepseek/deepseek-r1-0528:free
           openAiBaseUrl: https://openrouter.ai/api/v1
   - uses:
-      - plugin: https://command-query-main.deno.dev
+      - plugin: https://os-command-query.ubq.fi
   - uses:
       - plugin: ubiquity-os-marketplace/text-conversation-rewards@demo
         skipBotEvents: false
