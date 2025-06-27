@@ -2,10 +2,6 @@ plugins:
   - uses:
       - plugin: https://os-command-start-stop.ubq.fi
         skipBotEvents: false
-        with:
-          maxConcurrentTasks:
-            collaborator: 999999
-            contributor: 999999
   - uses:
       - plugin: https://os-command-demo.ubq.fi
   - uses:
