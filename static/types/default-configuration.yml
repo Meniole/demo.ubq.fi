@@ -18,7 +18,7 @@ plugins:
   - uses:
       - plugin: https://os-command-query.ubq.fi
   - uses:
-      - plugin: ubiquity-os-marketplace/text-conversation-rewards@demo
+      - plugin: ubiquity-os-marketplace/text-conversation-rewards@main
         skipBotEvents: false
         with:
           incentives:
@@ -27,11 +27,8 @@ plugins:
             userExtractor: {}
             dataPurge: {}
             formattingEvaluator: {}
-            permitGeneration: {}
+            payment: {}
             githubComment: {}
-          evmPrivateEncrypted: ""
-          erc20RewardToken: "0xC6ed4f520f6A4e4DC27273509239b7F8A68d2068"
-          evmNetworkId: 100
   - uses:
       - plugin: ubiquity-os-marketplace/daemon-disqualifier@main
   - uses:
