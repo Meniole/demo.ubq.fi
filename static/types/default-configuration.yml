@@ -6,7 +6,6 @@ plugins:
           maxConcurrentTasks:
             collaborator: 999999
             contributor: 999999
-          reviewDelayTolerance: 1 Day
   - uses:
       - plugin: https://os-command-demo.ubq.fi
   - uses:
