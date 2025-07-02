@@ -29,3 +29,5 @@ plugins:
       - plugin: ubiquity-os-marketplace/daemon-disqualifier@v1.0.0
   - uses:
       - plugin: ubiquity-os-marketplace/text-vector-embeddings@v1.0.0
+        with:
+          demoFlag: true
