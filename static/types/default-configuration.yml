@@ -7,14 +7,14 @@ plugins:
   - uses:
       - plugin: https://os-command-wallet.ubq.fi
   - uses:
-      - plugin: ubiquity-os-marketplace/command-ask@main
+      - plugin: ubiquity-os-marketplace/command-ask@v1.2.0
         with:
           model: deepseek/deepseek-r1-0528:free
           openAiBaseUrl: https://openrouter.ai/api/v1
   - uses:
       - plugin: https://os-command-query.ubq.fi
   - uses:
-      - plugin: ubiquity-os-marketplace/text-conversation-rewards@main
+      - plugin: ubiquity-os-marketplace/text-conversation-rewards@v1.7.2
         skipBotEvents: false
         with:
           incentives:
@@ -28,4 +28,4 @@ plugins:
   - uses:
       - plugin: ubiquity-os-marketplace/daemon-disqualifier@main
   - uses:
-      - plugin: ubiquity-os-marketplace/text-vector-embeddings@main
+      - plugin: ubiquity-os-marketplace/text-vector-embeddings@v1.0.0
