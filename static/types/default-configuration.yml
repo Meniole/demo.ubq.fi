@@ -14,7 +14,7 @@ plugins:
   - uses:
       - plugin: https://os-command-query.ubq.fi
   - uses:
-      - plugin: ubiquity-os-marketplace/text-conversation-rewards@v1.7.2
+      - plugin: ubiquity-os-marketplace/text-conversation-rewards@v1.7.3
         skipBotEvents: false
         with:
           incentives:
