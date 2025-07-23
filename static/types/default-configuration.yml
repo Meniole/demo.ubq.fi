@@ -14,7 +14,7 @@ plugins:
   - uses:
       - plugin: https://os-command-query.ubq.fi
   - uses:
-      - plugin: ubiquity-os-marketplace/text-conversation-rewards@v1.7.4
+      - plugin: ubiquity-os-marketplace/text-conversation-rewards@v1.7.6
         skipBotEvents: false
         with:
           incentives:
@@ -36,8 +36,8 @@ plugins:
               llmWebsiteModel:
                 model: deepseek/deepseek-chat-v3-0324:free
   - uses:
-      - plugin: ubiquity-os-marketplace/daemon-disqualifier@v1.0.0
+      - plugin: ubiquity-os-marketplace/daemon-disqualifier@v1.0.1
   - uses:
-      - plugin: ubiquity-os-marketplace/text-vector-embeddings@v1.0.0
+      - plugin: ubiquity-os-marketplace/text-vector-embeddings@v1.1.0
         with:
           demoFlag: true
