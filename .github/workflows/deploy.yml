@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Deploy to Cloudflare
         if: ${{ github.event.workflow_run.conclusion == 'success' }}
-        uses: gentlementlegen/cloudflare-deploy-action@main
+        uses: ubiquity/cloudflare-deploy-action@fix/bump-node
         with:
           repository: ${{ github.repository }}
           production_branch: ${{ github.event.repository.default_branch }}
