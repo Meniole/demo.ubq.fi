@@ -1,38 +1,43 @@
 plugins:
   - uses:
-      - plugin: https://ubiquity-os-command-start-stop-main.ubiquity.workers.dev
+      - plugin: https://os-command-start-stop.ubq.fi
         skipBotEvents: false
+  - uses:
+      - plugin: https://os-command-demo.ubq.fi
+  - uses:
+      - plugin: https://os-command-wallet.ubq.fi
+  - uses:
+      - plugin: ubiquity-os-marketplace/command-ask@v1.2.0
         with:
-          maxConcurrentTasks:
-            collaborator: 999999
-            contributor: 999999
-  - uses:
-      - plugin: https://ubiquity-os-plugin-demo-main.ubiquity.workers.dev
-  - uses:
-      - plugin: https://ubiquity-os-command-wallet-main.ubiquity.workers.dev
-  - uses:
-      - plugin: ubiquity-os-marketplace/command-ask@main
-        with:
-          model: anthropic/claude-3.5-sonnet
+          model: deepseek/deepseek-r1-0528:free
           openAiBaseUrl: https://openrouter.ai/api/v1
   - uses:
-      - plugin: https://ubiquity-os-command-query-user-main.ubiquity.workers.dev
+      - plugin: https://os-command-query.ubq.fi
   - uses:
-      - plugin: "ubiquity-os-marketplace/text-conversation-rewards@demo"
+      - plugin: ubiquity-os-marketplace/text-conversation-rewards@v1.7.6
         skipBotEvents: false
         with:
           incentives:
             collaboratorOnlyPaymentInvocation: false
-            contentEvaluator: {}
+            contentEvaluator:
+              openAi:
+                endpoint: "https://openrouter.ai/api/v1"
+                model: "deepseek/deepseek-chat-v3-0324:free"
             userExtractor: {}
             dataPurge: {}
             formattingEvaluator: {}
-            permitGeneration: {}
+            payment: {}
             githubComment: {}
-          evmPrivateEncrypted: ""
-          erc20RewardToken: "0xC6ed4f520f6A4e4DC27273509239b7F8A68d2068"
-          evmNetworkId: 100
+            reviewIncentivizer: {}
+            simplificationIncentivizer: {}
+            externalContent:
+              llmImageModel:
+                model: meta-llama/llama-4-maverick:free
+              llmWebsiteModel:
+                model: deepseek/deepseek-chat-v3-0324:free
   - uses:
-      - plugin: ubiquity-os-marketplace/daemon-disqualifier@main
+      - plugin: ubiquity-os-marketplace/daemon-disqualifier@v1.0.1
   - uses:
-      - plugin: https://ubiquity-os-comment-vector-embeddings-main.ubiquity.workers.dev
+      - plugin: ubiquity-os-marketplace/text-vector-embeddings@v1.1.0
+        with:
+          demoFlag: true

@@ -9,7 +9,7 @@ on:
 jobs:
   deploy-to-cloudflare:
     name: Automatic Cloudflare Deploy
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - name: Deploy to Cloudflare
         if: ${{ github.event.workflow_run.conclusion == 'success' }}
