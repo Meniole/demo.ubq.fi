@@ -3,16 +3,16 @@ plugins:
       - plugin: https://command-start-stop-demo.deno.dev
         skipBotEvents: false
   - uses:
-      - plugin: https://os-command-demo.ubq.fi
+      - plugin: https://command-demo-demo.deno.dev
   - uses:
-      - plugin: https://os-command-wallet.ubq.fi
+      - plugin: https://command-wallet-demo.deno.dev
   - uses:
       - plugin: ubiquity-os-marketplace/command-ask@v1.2.0
         with:
           model: deepseek/deepseek-r1-0528:free
           openAiBaseUrl: https://openrouter.ai/api/v1
   - uses:
-      - plugin: https://os-command-query.ubq.fi
+      - plugin: https://command-query-deno.deno.dev
   - uses:
       - plugin: ubiquity-os-marketplace/text-conversation-rewards@v1.7.6
         skipBotEvents: false
