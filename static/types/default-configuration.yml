@@ -36,7 +36,7 @@ plugins:
               llmWebsiteModel:
                 model: deepseek/deepseek-chat-v3-0324:free
   - uses:
-      - plugin: ubiquity-os-marketplace/daemon-disqualifier@v1.0.1
+      - plugin: ubiquity-os-marketplace/daemon-disqualifier@v1.0.2
   - uses:
       - plugin: ubiquity-os-marketplace/text-vector-embeddings@v1.1.0
         with:
