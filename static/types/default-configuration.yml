@@ -1,6 +1,6 @@
 plugins:
   - uses:
-      - plugin: https://os-command-start-stop.ubq.fi
+      - plugin: https://command-start-stop-demo.deno.dev
         skipBotEvents: false
   - uses:
       - plugin: https://os-command-demo.ubq.fi
