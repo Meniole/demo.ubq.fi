@@ -12,7 +12,7 @@ plugins:
           model: deepseek/deepseek-r1-0528:free
           openAiBaseUrl: https://openrouter.ai/api/v1
   - uses:
-      - plugin: https://command-query-deno.deno.dev
+      - plugin: https://command-query-demo.deno.dev
   - uses:
       - plugin: ubiquity-os-marketplace/text-conversation-rewards@v1.7.6
         skipBotEvents: false
